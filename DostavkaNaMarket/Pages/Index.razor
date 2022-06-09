@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+
 <PageTitle>Добавить поставку</PageTitle>
 
 <body>
@@ -72,10 +73,8 @@
                 <div class="col-12">
                     <div class="boxed-check-group boxed-check-outline-primary">
                         <label class="boxed-check boxed-check-inline">
-                            <input class="boxed-check-input" type="radio" name="radio-overview" checked>
-                            <div class="boxed-check-label">
-                                Коледино, @dateMonday.ToString("dddd dd MMMM yyyy")
-                                </div>
+                            <input class="boxed-check-input" type="radio" name="radio-overview">
+                            <div class="boxed-check-label">Коледино, @dateMonday.ToString("dddd dd MMMM yyyy")</div>
                         </label>
                         <label class="boxed-check boxed-check-inline">
                             <input class="boxed-check-input" type="radio" name="radio-overview">
@@ -84,7 +83,9 @@
                     </div>
                 </div>
             </div>
-            
+           
+
+
 
             <div class="col-12">
               <label for="name" class="form-label">ФИО</label>

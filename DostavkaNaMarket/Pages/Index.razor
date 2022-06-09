@@ -1,0 +1,148 @@
+﻿@page "/"
+
+<PageTitle>Добавить поставку</PageTitle>
+
+<body>
+    
+<div class="container">
+  <main>
+
+    <div class="row g-5">
+      
+      <div class="col-md-7 col-lg-8">
+        <h4 class="mb-3">Данные поставки</h4>
+        <form class="needs-validation" novalidate="">
+          <div class="row g-3">
+            <div class="col-3">
+              <label for="city" class="form-label">Город</label>
+              <select class="form-select" id="city" required="">
+                <option>Владимир</option>
+                <option>Иваново</option>
+                <option>Муром</option>
+                <option>Ковров</option>
+              </select>
+              <div class="invalid-feedback">
+                Please select a valid country.
+              </div>
+            </div>
+
+            @{
+                DateTime date = DateTime.Now;
+                DateTime date1 = new DateTime();
+                //ToString("dddd, dd MMMM yyyy");
+                if((date.ToString("dddd")) == "четверг")
+                {
+                    date1 = date.AddDays(6);
+                }
+            }
+
+            <div class="col-12">
+                <label for="warehouse" class="form-label">Отправить в</label>
+                <div class="col-12">
+                    <div class="boxed-check-group boxed-check-outline-primary">
+                        <label class="boxed-check boxed-check-inline">
+                            <input class="boxed-check-input" type="radio" name="radio-overview" checked>
+                            <div class="boxed-check-label">
+                                Коледино в понедельник
+                                </div>
+                        </label>
+                        <label class="boxed-check boxed-check-inline">
+                            <input class="boxed-check-input" type="radio" name="radio-overview">
+                            <div class="boxed-check-label">Электосталь, @date1.ToString("dddd dd MMMM yyyy")</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="col-12">
+              <label for="name" class="form-label">ФИО</label>
+              <input type="text" class="form-control" id="name" placeholder="Иванов Иван Иванович" value="" required="">
+              <div class="invalid-feedback">
+                Valid first name is required.
+              </div>
+            </div>
+
+            <div class="col-6">
+              <label for="phoneNumber" class="form-label">Номер телефона</label>
+              <div class="input-group has-validation">
+                <span class="input-group-text">+7</span>
+                <input type="tel" class="form-control" id="phoneNumber" placeholder="9011418686" required="">
+              <div class="invalid-feedback">
+                  Your username is required.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="form-label">Адрес электронной почты <span class="text-muted">(По желанию)</span></label>
+              <input type="email" class="form-control" id="email" placeholder="Ivanov@yandex.ru">
+              <div class="invalid-feedback">
+                Please enter a valid email address for shipping updates.
+              </div>
+            </div>
+
+            <div class="col-12">
+                <div class="row">
+                <div class="col-6 col-md-4">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggle_visibility('wizard'); color();" id="b1">Мне нужен вывоз</button>
+                </div>
+                <div class="col-6 col-md-4"></div>
+                <div class="col-6 col-md-4"></div>
+                </div>
+            </div>
+
+
+            <div class="col-12" id="wizard" style="display:none;">
+              <label for="Address" class="form-label">Адрес</label>
+              <input type="text" class="form-control" id="Address" placeholder="" required="">
+              <div class="invalid-feedback">
+                Please enter your shipping address.
+              </div>
+              <label for="Address" class="form-label">Стоимость вывоза в пределах города - 400р</label>
+            </div>
+
+
+            <div class="col-12">
+                <label for="Delivery" class="form-label">Введите ШК коробок</label>
+                <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">WB</span>
+                   <input type="text" class="form-control" name="shtrih" placeholder="8027 4257" aria-label="" aria-describedby="button-addon2">
+                   <button class="btn btn-outline-primary" type="button" id="button-addon2">Добавить</button>
+                </div>
+            </div>
+
+            
+
+          <hr class="my-4">
+
+          <h4 class="mb-3">Оплата</h4>
+
+          <div class="my-3">
+            <div class="form-check">
+              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
+              <label class="form-check-label" for="credit">Наличные</label>
+            </div>
+            <div class="form-check">
+              <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
+              <label class="form-check-label" for="debit">Карта (+2%)</label>
+            </div>
+            <div class="form-check"></div>
+          </div>
+
+          
+
+          <hr class="my-4">
+          </div>
+          <button class="w-100 btn btn-success btn-lg" type="submit">Создать заявку</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="my-5 pt-5 text-muted text-center text-small">
+    <p class="mb-1">© 2021–2022 Доставка на маркет</p>
+  </footer>
+</div>
+
+</body>

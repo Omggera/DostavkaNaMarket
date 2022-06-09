@@ -28,11 +28,42 @@
 
             @{
                 DateTime date = DateTime.Now;
-                DateTime date1 = new DateTime();
-                //ToString("dddd, dd MMMM yyyy");
-                if((date.ToString("dddd")) == "четверг")
+                DateTime dateWednesday = new DateTime();
+                DateTime dateMonday = new DateTime();
+                if((date.ToString("dddd")) == "понедельник")
                 {
-                    date1 = date.AddDays(6);
+                    dateWednesday = date.AddDays(2);
+                    dateMonday = date;
+                }
+                else if((date.ToString("dddd")) == "вторник")
+                {
+                    dateWednesday = date.AddDays(1);
+                    dateMonday = date.AddDays(6);
+                }
+                else if((date.ToString("dddd")) == "среда")
+                {
+                    dateWednesday = date;
+                    dateMonday = date.AddDays(5);
+                }
+                else if((date.ToString("dddd")) == "четверг")
+                {
+                    dateWednesday = date.AddDays(6);
+                    dateMonday = date.AddDays(4);
+                }
+                else if((date.ToString("dddd")) == "пятница")
+                {
+                    dateWednesday = date.AddDays(5);
+                    dateMonday = date.AddDays(3);
+                }
+                else if((date.ToString("dddd")) == "суббота")
+                {
+                    dateWednesday = date.AddDays(4);
+                    dateMonday = date.AddDays(2);
+                }
+                else if((date.ToString("dddd")) == "воскресенье")
+                {
+                    dateWednesday = date.AddDays(3);
+                    dateMonday = date.AddDays(1);
                 }
             }
 
@@ -43,12 +74,12 @@
                         <label class="boxed-check boxed-check-inline">
                             <input class="boxed-check-input" type="radio" name="radio-overview" checked>
                             <div class="boxed-check-label">
-                                Коледино в понедельник
+                                Коледино, @dateMonday.ToString("dddd dd MMMM yyyy")
                                 </div>
                         </label>
                         <label class="boxed-check boxed-check-inline">
                             <input class="boxed-check-input" type="radio" name="radio-overview">
-                            <div class="boxed-check-label">Электосталь, @date1.ToString("dddd dd MMMM yyyy")</div>
+                            <div class="boxed-check-label">Электосталь, @dateWednesday.ToString("dddd dd MMMM yyyy")</div>
                         </label>
                     </div>
                 </div>

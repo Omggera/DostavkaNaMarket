@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using DostavkaNaMarket.Data
 
 
 <PageTitle>Добавить поставку</PageTitle>
@@ -68,24 +69,32 @@
                 }
             }
 
+           
+
             <div class="col-12">
                 <label for="warehouse" class="form-label">Отправить в</label>
                 <div class="col-12">
                     <div class="boxed-check-group boxed-check-outline-primary">
                         <label class="boxed-check boxed-check-inline">
-                            <input class="boxed-check-input" type="radio" name="radio-overview">
+                            <input class="boxed-check-input" type="radio" name="radio-overview" Value="@dateMonday.ToString("dddd dd MMMM yyyy")"
+            @onchange="OnSelect">
                             <div class="boxed-check-label">Коледино, @dateMonday.ToString("dddd dd MMMM yyyy")</div>
                         </label>
                         <label class="boxed-check boxed-check-inline">
-                            <input class="boxed-check-input" type="radio" name="radio-overview">
-                            <div class="boxed-check-label">Электосталь, @dateWednesday.ToString("dddd dd MMMM yyyy")</div>
+                            <input class="boxed-check-input" type="radio" name="radio-overview" Value="@dateWednesday.ToString("dddd dd MMMM yyyy")"
+            @onchange="OnSelect">
+                            <div class="boxed-check-label">Электросталь, @dateWednesday.ToString("dddd dd MMMM yyyy")</div>
                         </label>
                     </div>
                 </div>
             </div>
-           
+           <p>@value</p>
 
+            @code{
+                private string value = "Дата не выбрана";
 
+                public void OnSelect(Microsoft.AspNetCore.Components.ChangeEventArgs args) => value = (string)args.Value;
+                }
 
             <div class="col-12">
               <label for="name" class="form-label">ФИО</label>
@@ -114,18 +123,25 @@
               </div>
             </div>
 
-            <div class="col-12">
-                <div class="row">
-                <div class="col-6 col-md-4">
-                    <button type="button" class="btn btn-outline-primary" onclick="toggle_visibility('wizard'); color();" id="b1">Мне нужен вывоз</button>
-                </div>
-                <div class="col-6 col-md-4"></div>
-                <div class="col-6 col-md-4"></div>
+
+
+
+             <div class="col-12">
+                <div class="col-12">
+                    <div class="boxed-check-group boxed-check-outline-primary">
+                        <label class="boxed-check boxed-check-inline">
+                            <input class="boxed-check-input" type="radio" name="radio-overview" Value="Sam" @onchange="OnSelected" checked>
+                            <div class="boxed-check-label">Привезу самостоятельно</div>
+                        </label>
+                        <label class="boxed-check boxed-check-inline">
+                            <input class="boxed-check-input" type="radio" name="radio-overview" Value="Vivoz" @onchange="OnSelected">
+                            <div class="boxed-check-label">Мне нужен вывоз</div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
-
-            <div class="col-12" id="wizard" style="display:none;">
+            <div class="col-12" id="wizard" style="display:none;" @attributes="InputAttributes">
               <label for="Address" class="form-label">Адрес</label>
               <input type="text" class="form-control" id="Address" placeholder="" required="">
               <div class="invalid-feedback">
@@ -133,6 +149,32 @@
               </div>
               <label for="Address" class="form-label">Стоимость вывоза в пределах города - 400р</label>
             </div>
+
+            @code{
+                private string values = "Sam";
+                public Dictionary<string, object> InputAttributes { get; set; }
+
+                public void OnSelected(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+                {
+                    
+                    values = (string)args.Value;
+                    if (values == "Sam")
+                    {
+                         InputAttributes = new Dictionary<string, object>()
+                         {
+                             { "style", "display:none;" }
+                         };
+                    }
+                    else if(values == "Vivoz")
+                    {
+                        InputAttributes = new Dictionary<string, object>()
+                         {
+                             { "style", "display:contents;" }
+                         };
+                    }
+                }
+            }
+
 
 
             <div class="col-12">

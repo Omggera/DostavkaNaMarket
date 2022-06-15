@@ -88,13 +88,9 @@
                     </div>
                 </div>
             </div>
-           <p>@value</p>
+           <p> test: @value</p>
 
-            @code{
-                private string value = "Дата не выбрана";
 
-                public void OnSelect(Microsoft.AspNetCore.Components.ChangeEventArgs args) => value = (string)args.Value;
-                }
 
             <div class="col-12">
               <label for="name" class="form-label">ФИО</label>
@@ -143,50 +139,66 @@
 
             <div class="col-12" id="wizard" style="display:none;" @attributes="InputAttributes">
               <label for="Address" class="form-label">Адрес</label>
-              <input type="text" class="form-control" id="Address" placeholder="" required="">
+              <input type="text" class="form-control" id="Address" placeholder="Город, улица, дом, подъезд" required="">
               <div class="invalid-feedback">
                 Please enter your shipping address.
               </div>
               <label for="Address" class="form-label">Стоимость вывоза в пределах города - 400р</label>
             </div>
 
-            @code{
-                private string values = "Sam";
-                public Dictionary<string, object> InputAttributes { get; set; }
-
-                public void OnSelected(Microsoft.AspNetCore.Components.ChangeEventArgs args)
-                {
-                    
-                    values = (string)args.Value;
-                    if (values == "Sam")
-                    {
-                         InputAttributes = new Dictionary<string, object>()
-                         {
-                             { "style", "display:none;" }
-                         };
-                    }
-                    else if(values == "Vivoz")
-                    {
-                        InputAttributes = new Dictionary<string, object>()
-                         {
-                             { "style", "display:contents;" }
-                         };
-                    }
-                }
-            }
 
 
-
-            <div class="col-12">
-                <label for="Delivery" class="form-label">Введите ШК коробок</label>
+            <div class="col-6">
+                <label for="Delivery" class="form-label">Сколько коробок в поставке?</label>
                 <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">WB</span>
-                   <input type="text" class="form-control" name="shtrih" placeholder="8027 4257" aria-label="" aria-describedby="button-addon2">
-                   <button class="btn btn-outline-primary" type="button" id="button-addon2">Добавить</button>
+                   <input type="number" min="0" max="20" class="form-control" aria-label="" aria-describedby="button-addon2" 
+                          @bind-value="@item" @bind-value:event="oninput">
                 </div>
             </div>
+            <p>test: Значение переменной: @item</p>
 
-            
+            @for(int i = 0; i < item; i++)
+            {
+                <div class="col-6">
+                    <label for="Delivery" class="form-label">Введите ШК @(i+1)-й коробки</label>
+                    <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">WB</span>
+                    <input type="text" class="form-control" name="barcode_@i" placeholder="8027 4257" aria-label="" aria-describedby="button-addon2"
+                           id="@i" Value="@barcode">
+                    
+                    </div>
+                </div>
+            }
+
+            @if (item == 0)
+            {
+                InputAttributesItem = new Dictionary<string, object>()
+                    {
+                        { "style", "display:none;" }
+                    };
+            }
+            else if(item > 0)
+            {
+                InputAttributesItem = new Dictionary<string, object>()
+                    {
+                        { "style", "display:inline;" }
+                    };
+            }
+
+            <div class="col-12" id="wizard" style="display:none;" @attributes="InputAttributesItem">
+                <button class="btn btn-outline-primary" type="button" id="button-addon2" @onclick="AddToList">Добавить</button>
+            </div>
+           
+            <p>test: barcode: @barcode</p>
+
+            <ul>
+                    @foreach (var bar in AllNumbersBarcode)
+                    {
+                        <li>
+                            <p>@bar</p>
+                        </li>
+                    }
+            </ul>
 
           <hr class="my-4">
 
@@ -220,3 +232,50 @@
 </div>
 
 </body>
+
+@code{
+    // Дата отправки
+    private string value = "Дата не выбрана";
+
+    // Нужен ли вывоз или привезет сам
+    private string values = "Sam";
+    public Dictionary<string, object> InputAttributes { get; set; }
+
+    // Количество коробок в поставке
+    private int item {get; set;}
+    public Dictionary<string, object> InputAttributesItem { get; set; }
+
+    private List<int> AllNumbersBarcode = new List<int>();
+    private int barcode {get; set;}
+
+    public void OnSelect(Microsoft.AspNetCore.Components.ChangeEventArgs args) => value = (string)args.Value;
+
+    public void OnSelected(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        values = (string)args.Value;
+        if (values == "Sam")
+        {
+            InputAttributes = new Dictionary<string, object>()
+            {
+                { "style", "display:none;" }
+            };
+        }
+        else if(values == "Vivoz")
+        {
+            InputAttributes = new Dictionary<string, object>()
+            {
+                { "style", "display:inline;" }
+            };
+        }
+    }
+
+    public void AddToList()
+    {
+        AllNumbersBarcode.Add(barcode);
+    }
+
+    public void NewItem(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        barcode = (int)args.Value;
+    }
+}

@@ -143,7 +143,6 @@
               <div class="invalid-feedback">
                 Please enter your shipping address.
               </div>
-              <label for="Address" class="form-label">Стоимость вывоза в пределах города - 400р</label>
             </div>
 
 
@@ -153,7 +152,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">WB</span>
                     <input type="number" class="form-control" name="barcode" placeholder="8027 4257" aria-label="" aria-describedby="button-addon2"
-                            @bind-value="barcode" @bind-value:event="oninput" @onkeyup="@Enter">
+                            @bind-value="barcode" @bind-value:event="oninput" @onkeydown="@Enter">
                     <button class="btn btn-outline-primary" type="button" id="button-addon2" @onclick="AddToList">Добавить</button>
                 </div>
                 </div>
@@ -164,10 +163,9 @@
                 <div class="col-6">
                     <div class="input-group mb-3">
                         <span class="input-group-text col-9" id="basic-addon1">@bar</span>
-                        <button type="button" class="btn btn-outline-danger">Удалить</button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveBarcode(bar)">Удалить</button>
                     </div>
                 </div>
-
             }
 
 
@@ -188,10 +186,22 @@
           </div>
 
           
+            <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" Value="ok" id="invalidCheck" Checked="@isChecked" 
+                  @onchange="SubmitChanged" required>
+                  <label class="form-check-label" for="invalidCheck">
+                    Примите условия и соглашения
+                  </label>
+                  <div class="invalid-feedback">
+                    Вы должны принять перед отправкой.
+                  </div>
+                </div>
+            </div>
 
           <hr class="my-4">
           </div>
-          <button class="w-100 btn btn-success btn-lg" type="submit">Создать заявку</button>
+          <button class="w-100 btn btn-secondary btn-lg" type="button" @attributes="InputAttributesSubmit">Создать заявку</button>
         </form>
       </div>
     </div>
@@ -218,6 +228,9 @@
     private List<string> AllNumbersBarcode = new List<string>();
     private string barcode { get; set; } = "";
 
+    private bool isChecked;
+    public Dictionary<string, object> InputAttributesSubmit { get; set; }
+
     public void OnSelect(Microsoft.AspNetCore.Components.ChangeEventArgs args) => value = (string)args.Value;
 
     public void OnSelected(Microsoft.AspNetCore.Components.ChangeEventArgs args)
@@ -242,6 +255,12 @@
     public void AddToList()
     {
         AllNumbersBarcode.Add(barcode);
+        barcode = "";
+    }
+
+    public void RemoveBarcode(string bar)
+    {
+        AllNumbersBarcode.Remove(bar);
     }
 
     public void Enter(KeyboardEventArgs e)
@@ -251,4 +270,38 @@
             AddToList();
         }
     }
+
+    public void SubmitChanged(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        isChecked = (bool)args.Value;
+        if (isChecked)
+        {
+            InputAttributesSubmit = new Dictionary<string, object>()
+            {
+                { "class", "w-100 btn btn-success btn-lg" },
+                { "type", "submit" }
+            };
+        }
+        else if(isChecked == false)
+        {
+            InputAttributesSubmit = new Dictionary<string, object>()
+            {
+                { "class", "w-100 btn btn-secondary btn-lg" },
+                { "type", "button" }
+            };
+        }
+    }
+
+    //public void OnSubmit(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    //{
+    //    okSubmit = (string)args.Value;
+    //    if(okSubmit == "ok")
+    //    {
+    //        InputAttributes = new Dictionary<string, object>()
+    //        {
+    //            { "type", "submit" }
+    //        };
+    //    }
+
+    //}
 }

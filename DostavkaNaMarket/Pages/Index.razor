@@ -147,58 +147,29 @@
             </div>
 
 
-
-            <div class="col-6">
-                <label for="Delivery" class="form-label">Сколько коробок в поставке?</label>
+            <div class="col-12">
+                <div class="col-6">
+                <label for="Delivery" class="form-label">Введите ШК коробок по очереди</label>
                 <div class="input-group mb-3">
-                   <input type="number" min="0" max="20" class="form-control" aria-label="" aria-describedby="button-addon2" 
-                          @bind-value="@item" @bind-value:event="oninput">
+                    <span class="input-group-text" id="basic-addon1">WB</span>
+                    <input type="number" class="form-control" name="barcode" placeholder="8027 4257" aria-label="" aria-describedby="button-addon2"
+                            @bind-value="barcode" @bind-value:event="oninput" @onkeyup="@Enter">
+                    <button class="btn btn-outline-primary" type="button" id="button-addon2" @onclick="AddToList">Добавить</button>
+                </div>
                 </div>
             </div>
-            <p>test: Значение переменной: @item</p>
 
-            @for(int i = 0; i < item; i++)
+            @foreach(string bar in AllNumbersBarcode)
             {
                 <div class="col-6">
-                    <label for="Delivery" class="form-label">Введите ШК @(i+1)-й коробки</label>
                     <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">WB</span>
-                    <input type="text" class="form-control" name="barcode_@i" placeholder="8027 4257" aria-label="" aria-describedby="button-addon2"
-                           id="@i" Value="@barcode">
-                    
+                        <span class="input-group-text col-9" id="basic-addon1">@bar</span>
+                        <button type="button" class="btn btn-outline-danger">Удалить</button>
                     </div>
                 </div>
+
             }
 
-            @if (item == 0)
-            {
-                InputAttributesItem = new Dictionary<string, object>()
-                    {
-                        { "style", "display:none;" }
-                    };
-            }
-            else if(item > 0)
-            {
-                InputAttributesItem = new Dictionary<string, object>()
-                    {
-                        { "style", "display:inline;" }
-                    };
-            }
-
-            <div class="col-12" id="wizard" style="display:none;" @attributes="InputAttributesItem">
-                <button class="btn btn-outline-primary" type="button" id="button-addon2" @onclick="AddToList">Добавить</button>
-            </div>
-           
-            <p>test: barcode: @barcode</p>
-
-            <ul>
-                    @foreach (var bar in AllNumbersBarcode)
-                    {
-                        <li>
-                            <p>@bar</p>
-                        </li>
-                    }
-            </ul>
 
           <hr class="my-4">
 
@@ -243,10 +214,9 @@
 
     // Количество коробок в поставке
     private int item {get; set;}
-    public Dictionary<string, object> InputAttributesItem { get; set; }
 
-    private List<int> AllNumbersBarcode = new List<int>();
-    private int barcode {get; set;}
+    private List<string> AllNumbersBarcode = new List<string>();
+    private string barcode { get; set; } = "";
 
     public void OnSelect(Microsoft.AspNetCore.Components.ChangeEventArgs args) => value = (string)args.Value;
 
@@ -274,8 +244,11 @@
         AllNumbersBarcode.Add(barcode);
     }
 
-    public void NewItem(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    public void Enter(KeyboardEventArgs e)
     {
-        barcode = (int)args.Value;
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            AddToList();
+        }
     }
 }

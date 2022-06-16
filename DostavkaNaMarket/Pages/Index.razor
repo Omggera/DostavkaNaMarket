@@ -30,46 +30,6 @@
             <p> test: @user.CitySell</p>
 
             @{
-                DateTime date = DateTime.Now;
-                DateTime dateWednesday = new DateTime();
-                DateTime dateMonday = new DateTime();
-                if((date.ToString("dddd")) == "понедельник")
-                {
-                    dateWednesday = date.AddDays(2);
-                    dateMonday = date;
-                }
-                else if((date.ToString("dddd")) == "вторник")
-                {
-                    dateWednesday = date.AddDays(1);
-                    dateMonday = date.AddDays(6);
-                }
-                else if((date.ToString("dddd")) == "среда")
-                {
-                    dateWednesday = date;
-                    dateMonday = date.AddDays(5);
-                }
-                else if((date.ToString("dddd")) == "четверг")
-                {
-                    dateWednesday = date.AddDays(6);
-                    dateMonday = date.AddDays(4);
-                }
-                else if((date.ToString("dddd")) == "пятница")
-                {
-                    dateWednesday = date.AddDays(5);
-                    dateMonday = date.AddDays(3);
-                }
-                else if((date.ToString("dddd")) == "суббота")
-                {
-                    dateWednesday = date.AddDays(4);
-                    dateMonday = date.AddDays(2);
-                }
-                else if((date.ToString("dddd")) == "воскресенье")
-                {
-                    dateWednesday = date.AddDays(3);
-                    dateMonday = date.AddDays(1);
-                }
-            }
-            @{
                 user.DateDelivery();
             }
             <div class="col-12">
@@ -87,6 +47,7 @@
                         </label>
                     </div>
                     </InputRadioGroup>
+                    <ValidationMessage For="(() => user.DateSell)" />
                 </div>
             </div>
            <p> test: @user.DateSell</p>
@@ -109,33 +70,32 @@
 
             <div class="col-md-6">
               <label for="email" class="form-label">Адрес электронной почты <span class="text-muted">(По желанию)</span></label>
-              <input type="email" class="form-control" id="email" placeholder="Ivanov@yandex.ru">
-              <div class="invalid-feedback">
-                Please enter a valid email address for shipping updates.
-              </div>
+              <InputText type="email" class="form-control" id="email" placeholder="Ivanov@yandex.ru" @bind-Value="user.ClientMail"/>
             </div>
 
+            @{
+                user.OnSelected();
+            }
              <div class="col-12">
                 <div class="col-12">
+                    <InputRadioGroup Name="radio-overview-2" @bind-Value="user.OfDelSell">
                     <div class="boxed-check-group boxed-check-outline-primary">
                         <label class="boxed-check boxed-check-inline">
-                            <input class="boxed-check-input" type="radio" name="radio-overview-2" Value="Sam" @onchange="OnSelected" checked>
+                            <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@User.OfficeOrDelivery.Sam"/>
                             <div class="boxed-check-label">Привезу самостоятельно</div>
                         </label>
                         <label class="boxed-check boxed-check-inline">
-                            <input class="boxed-check-input" type="radio" name="radio-overview-2" Value="Vivoz" @onchange="OnSelected">
+                            <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@User.OfficeOrDelivery.Vivoz"/>
                             <div class="boxed-check-label">Мне нужен вывоз</div>
                         </label>
                     </div>
+                    </InputRadioGroup>
                 </div>
             </div>
 
-            <div class="col-12" id="wizard" style="display:none;" @attributes="InputAttributes">
+            <div class="col-12" id="wizard" style="display:none;" @attributes="user.InputAttributes">
               <label for="Address" class="form-label">Адрес</label>
-              <input type="text" class="form-control" id="Address" placeholder="Город, улица, дом, подъезд" required="">
-              <div class="invalid-feedback">
-                Please enter your shipping address.
-              </div>
+              <InputText type="text" class="form-control" id="Address" placeholder="Город, улица, дом, подъезд" @bind-Value="user.ClientAdress"/>
             </div>
 
             <div class="col-12">
@@ -217,8 +177,8 @@
     }
     
 
-    private string values = "Sam";
-    public Dictionary<string, object> InputAttributes { get; set; }
+    //private string values = "Sam";
+    
 
     // Количество коробок в поставке
     private int item {get; set;}
@@ -242,24 +202,7 @@
     //}
 
     // Нужен ли вывоз или привезет сам
-    public void OnSelected(Microsoft.AspNetCore.Components.ChangeEventArgs args)
-    {
-        values = (string)args.Value;
-        if (values == "Sam")
-        {
-            InputAttributes = new Dictionary<string, object>()
-            {
-                { "style", "display:none;" }
-            };
-        }
-        else if(values == "Vivoz")
-        {
-            InputAttributes = new Dictionary<string, object>()
-            {
-                { "style", "display:inline;" }
-            };
-        }
-    }
+    
 
     public void AddToList()
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace DostavkaNaMarket.Models
 {
@@ -29,14 +30,14 @@ namespace DostavkaNaMarket.Models
         public DateTime dateMonday = new DateTime();
 
         [Required(ErrorMessage = "Поле ФИО обязательно для заполнения")]
-        public string ClientName { get; set; }
+        public string? ClientName { get; set; }
 
         [Required(ErrorMessage = "Поле Номер телефона обязательно для заполнения")]
         [MaxLength(10, ErrorMessage = "Номер телефона должен быть в формате 9011418686")]
         [DataType(DataType.PhoneNumber)]
-        public string ClientPhone { get; set; }
+        public string? ClientPhone { get; set; }
 
-        public string ClientMail { get; set; }
+        public string? ClientMail { get; set; }
 
         public enum OfficeOrDelivery
         {
@@ -44,10 +45,18 @@ namespace DostavkaNaMarket.Models
             Vivoz,
         }
         public OfficeOrDelivery? OfDelSell { get; set; } = OfficeOrDelivery.Sam;
-        public Dictionary<string, object> InputAttributes { get; set; }
+        public Dictionary<string, object>? InputAttributes { get; set; }
         
-        public string ClientAdress { get; set; }
-        
+        public string? ClientAdress { get; set; }
+
+        public List<string> AllNumbersBarcode = new List<string>();
+        public string? barcode { get; set; }
+
+        [Required]
+        [Range(typeof(bool), "true", "true",
+        ErrorMessage = "This form disallows unapproved ships.")]
+        public bool isChecked { get; set; }
+        public Dictionary<string, object>? InputAttributesSubmit { get; set; }
 
         // Не красивый, но рабочий метод определения даты отправки
         public void DateDelivery()
@@ -103,6 +112,49 @@ namespace DostavkaNaMarket.Models
                 InputAttributes = new Dictionary<string, object>()
                 {
                     { "style", "display:inline;" }
+                };
+            }
+        }
+
+        public void AddToList()
+        {
+            if(barcode != null)
+            {
+                AllNumbersBarcode.Add(barcode);
+                barcode = null;
+            }
+            else barcode = null;
+        }
+
+        public void RemoveBarcode(string bar)
+        {
+            AllNumbersBarcode.Remove(bar);
+        }
+
+        public void Enter(KeyboardEventArgs e)
+        {
+            if (e.Code == "Enter" || e.Code == "NumpadEnter")
+            {
+                AddToList();
+            }
+        }
+
+        public void SubmitChanged()
+        {
+            if (isChecked)
+            {
+                InputAttributesSubmit = new Dictionary<string, object>()
+                {
+                    { "class", "w-100 btn btn-primary btn-lg" },
+                    { "type", "submit" }
+                };
+            }
+            else if (isChecked == false)
+            {
+                InputAttributesSubmit = new Dictionary<string, object>()
+                {
+                    { "class", "w-100 btn btn-secondary btn-lg" },
+                    { "type", "button" }
                 };
             }
         }

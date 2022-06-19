@@ -5,15 +5,45 @@
 
 <PageTitle>Добавить поставку</PageTitle>
 
-<body>
 <EditForm Model="user" OnValidSubmit="Create">
+<body>
+
 <DataAnnotationsValidator/>    
 <div class="container">
   <main>
     <div class="row g-5">
-      <div class="col-md-7 col-lg-8">
-        <h4 class="mb-3">Данные поставки</h4>
-        <form class="needs-validation" novalidate="">
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-primary">Данные водителя</span>
+        </h4>
+        <ul class="list-group mb-3">
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+              <small class="text-muted">Водитель</small>
+              <h6 class="my-0">Ценных Илья Владимирович </h6>
+            </div>
+            <span class="text-muted"></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+              <small class="text-muted">Автомобиль</small>
+              <h6 class="my-0">Citroen Jumper, гос. номер М077РС33</h6>
+            </div>
+            <span class="text-muted"></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+              <small class="text-muted">Телефон</small>
+              <h6 class="my-0"> 8 (920) 903 - 5254</h6>
+            </div>
+            <span class="text-muted"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-7 col-lg-7">
+        <h4 class="mb-3 text-primary">Данные поставки</h4>
+        <form class="needs-validation">
           <div class="row g-3">
             <div class="col-3">
               <label for="city" class="form-label">Город</label>
@@ -27,7 +57,6 @@
                 Please select a valid country.
               </div>
             </div>
-            <p> test: @user.CitySell</p>
 
             @{
                 user.DateDelivery();
@@ -50,14 +79,12 @@
                     <ValidationMessage For="(() => user.DateSell)" />
                 </div>
             </div>
-           <p> test: @user.DateSell</p>
 
             <div class="col-12">
               <label for="name" class="form-label">ФИО</label>
               <InputText class="form-control" placeholder="Иванов Иван Иванович" @bind-Value="user.ClientName"/>
               <ValidationMessage For="(() => user.ClientName)" />
             </div>
-            <p> test: @user.ClientName</p>
 
             <div class="col-6">
                 <label for="phoneNumber" class="form-label">Номер телефона</label>
@@ -98,24 +125,26 @@
               <InputText type="text" class="form-control" id="Address" placeholder="Город, улица, дом, подъезд" @bind-Value="user.ClientAdress"/>
             </div>
 
+          
+
             <div class="col-12">
                 <div class="col-6">
                 <label for="Delivery" class="form-label">Введите ШК коробок по очереди</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">WB</span>
                     <input type="number" class="form-control" name="barcode" placeholder="8027 4257" aria-label="" aria-describedby="button-addon2"
-                            @bind-value="barcode" @bind-value:event="oninput" @onkeydown="@Enter">
-                    <button class="btn btn-outline-primary" type="button" id="button-addon2" @onclick="AddToList">Добавить</button>
+                            @bind-value="user.barcode" @bind-value:event="oninput" @onkeydown="@user.Enter"/>
+                    <button class="btn btn-outline-primary" type="button" id="button-addon2" @onclick="user.AddToList">Добавить</button>
                 </div>
                 </div>
             </div>
 
-            @foreach(string bar in AllNumbersBarcode)
+            @foreach(string bar in user.AllNumbersBarcode)
             {
                 <div class="col-6">
                     <div class="input-group mb-3">
                         <span class="input-group-text col-9" id="basic-addon1">@bar</span>
-                        <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveBarcode(bar)">Удалить</button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="() => user.RemoveBarcode(bar)">Удалить</button>
                     </div>
                 </div>
             }
@@ -134,26 +163,26 @@
               <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
               <label class="form-check-label" for="debit">Карта (+2%)</label>
             </div>
-            <div class="form-check"></div>
           </div>
 
-          
+          <hr class="my-4">
+
+          @{
+                user.SubmitChanged();
+            }
             <div class="col-12">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" Value="ok" id="invalidCheck" Checked="@isChecked" 
-                  @onchange="SubmitChanged" required>
+                  <InputCheckbox class="form-check-input" @bind-Value="user.isChecked" id="invalidCheck"/>
                   <label class="form-check-label" for="invalidCheck">
-                    Примите условия и соглашения
+                      Создавая заявку вы соглашаетесь с нашими <a href="/conditions">Условиями</a>
                   </label>
-                  <div class="invalid-feedback">
-                    Вы должны принять перед отправкой.
-                  </div>
                 </div>
             </div>
 
-          <hr class="my-4">
+            <div class="col-12">
+              <button class="w-100 btn btn-secondary btn-lg" type="button" @attributes="user.InputAttributesSubmit">Создать заявку</button>
           </div>
-          <button class="w-100 btn btn-secondary btn-lg" type="button" @attributes="InputAttributesSubmit">Создать заявку</button>
+          </div>
         </form>
       </div>
     </div>
@@ -163,86 +192,15 @@
     <p class="mb-1">© 2021–2022 Доставка на маркет</p>
   </footer>
 </div>
-</EditForm>
+
 </body>
+</EditForm>
 
 @code{
-    //private string value = "Дата не выбрана";
-
-
     User user = new User();
     void Create()
     {
         Console.WriteLine(user.ClientPhone);
     }
-    
-
-    //private string values = "Sam";
-    
-
-    // Количество коробок в поставке
-    private int item {get; set;}
-
-    private List<string> AllNumbersBarcode = new List<string>();
-    private string barcode { get; set; } = "";
-
-    private bool isChecked;
-    public Dictionary<string, object> InputAttributesSubmit { get; set; }
-
-    //public void CitySelect(Microsoft.AspNetCore.Components.ChangeEventArgs args) => user.CitySell = (string)args.Value;
-
-    // Дата отправки
-    //public void OnSelect(Microsoft.AspNetCore.Components.ChangeEventArgs args) => user.Value = (string)args.Value;
-
-    //public int Converting(string phone)
-    //{
-    //    phone = clientPhone;
-    //    int result = Convert.ToInt32(phone);
-    //    return result;
-    //}
-
-    // Нужен ли вывоз или привезет сам
-    
-
-    public void AddToList()
-    {
-        AllNumbersBarcode.Add(barcode);
-        barcode = "";
-    }
-
-    public void RemoveBarcode(string bar)
-    {
-        AllNumbersBarcode.Remove(bar);
-    }
-
-    public void Enter(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            AddToList();
-        }
-    }
-
-    public void SubmitChanged(Microsoft.AspNetCore.Components.ChangeEventArgs args)
-    {
-        isChecked = (bool)args.Value;
-        if (isChecked)
-        {
-            InputAttributesSubmit = new Dictionary<string, object>()
-            {
-                { "class", "w-100 btn btn-success btn-lg" },
-                { "type", "submit" }
-            };
-        }
-        else if(isChecked == false)
-        {
-            InputAttributesSubmit = new Dictionary<string, object>()
-            {
-                { "class", "w-100 btn btn-secondary btn-lg" },
-                { "type", "button" }
-            };
-        }
-    }
-
 
 }

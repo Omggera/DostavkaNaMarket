@@ -52,6 +52,20 @@ namespace DostavkaNaMarket.Models
         public List<string> AllNumbersBarcode = new List<string>();
         public string? barcode { get; set; }
 
+        public enum PaymentMethod
+        {
+            Cash,
+            Card,
+        }
+        public PaymentMethod? PayMet { get; set; } = PaymentMethod.Cash;
+
+        public int BoxPrice = 200;
+        public int? BoxAmount { get; set; }
+
+        public int? DeliveryPrice { get; set; }
+
+        public int? FinalAmount { get; set; }
+
         [Required]
         [Range(typeof(bool), "true", "true",
         ErrorMessage = "This form disallows unapproved ships.")]
@@ -157,6 +171,20 @@ namespace DostavkaNaMarket.Models
                     { "type", "button" }
                 };
             }
+        }
+
+        public void CalculateFinalAmount()
+        {
+            BoxAmount = AllNumbersBarcode.Count * BoxPrice;
+            FinalAmount = BoxAmount + DeliveryPrice;
+
+            if ((ClientAdress == null) | (OfDelSell == OfficeOrDelivery.Sam))
+            {
+                DeliveryPrice = 0;
+                ClientAdress = null;
+            }
+            else DeliveryPrice = 400;
+
         }
     }
 }

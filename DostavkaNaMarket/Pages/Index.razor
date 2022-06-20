@@ -43,7 +43,6 @@
 
       <div class="col-md-7 col-lg-7">
         <h4 class="mb-3 text-primary">Данные поставки</h4>
-        <form class="needs-validation">
           <div class="row g-3">
             <div class="col-3">
               <label for="city" class="form-label">Город</label>
@@ -53,9 +52,6 @@
                 <option value="@User.City.Муром">Муром</option>
                 <option value="@User.City.Ковров">Ковров</option>
               </InputSelect>
-              <div class="invalid-feedback">
-                Please select a valid country.
-              </div>
             </div>
 
             @{
@@ -152,18 +148,52 @@
 
           <hr class="my-4">
 
-          <h4 class="mb-3">Оплата</h4>
+          <h4 class="mb-3">Способ оплаты</h4>
 
           <div class="my-3">
-            <div class="form-check">
-              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
-              <label class="form-check-label" for="credit">Наличные</label>
-            </div>
-            <div class="form-check">
-              <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
-              <label class="form-check-label" for="debit">Карта (+2%)</label>
-            </div>
+              
+                <InputRadioGroup Name="radio" @bind-Value="user.PayMet">
+                    <div class="form-check">
+                        <label class="check-input">
+                          <InputRadio class="form-check-input" type="radio" name="radio" Value="@User.PaymentMethod.Cash" checked="" required=""/>
+                            <div class="form-check-label">Наличные</div>
+                        </label>
+                    </div>
+                     <div class="form-check">
+                         <label class="check-input">
+                          <InputRadio class="form-check-input" type="radio" name="radio" Value="@User.PaymentMethod.Card" required=""/>
+                            <div class="form-check-label">Карта (+2%)</div>
+                        </label>
+                    </div>
+                </InputRadioGroup>
+            
           </div>
+
+          <hr class="my-4">
+
+          <h4 class="mb-3">Итого к оплате</h4>
+
+              @{
+                    user.CalculateFinalAmount();
+                }
+              <ul class="list-group mb-3">
+              <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <h6 class="my-0">Коробки (@user.AllNumbersBarcode.Count шт.)</h6>
+                </div>
+                <span class="text-muted">@(user.BoxAmount) руб.</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <h6 class="my-0">Вывоз</h6>
+                </div>
+                <span class="text-muted">@(user.DeliveryPrice) руб.</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Итого</span>
+                <strong>@(user.FinalAmount) руб.</strong>
+              </li>
+            </ul>
 
           <hr class="my-4">
 
@@ -183,7 +213,6 @@
               <button class="w-100 btn btn-secondary btn-lg" type="button" @attributes="user.InputAttributesSubmit">Создать заявку</button>
           </div>
           </div>
-        </form>
       </div>
     </div>
   </main>

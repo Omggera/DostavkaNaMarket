@@ -160,7 +160,7 @@ namespace DostavkaNaMarket.Models
                 InputAttributesSubmit = new Dictionary<string, object>()
                 {
                     { "class", "w-100 btn btn-primary btn-lg" },
-                    { "type", "submit" }
+                    { "type", "submit" },
                 };
             }
             else if (isChecked == false)
@@ -176,7 +176,6 @@ namespace DostavkaNaMarket.Models
         public void CalculateFinalAmount()
         {
             BoxAmount = AllNumbersBarcode.Count * BoxPrice;
-            FinalAmount = BoxAmount + DeliveryPrice;
 
             if ((ClientAdress == null) | (OfDelSell == OfficeOrDelivery.Sam))
             {
@@ -185,6 +184,20 @@ namespace DostavkaNaMarket.Models
             }
             else DeliveryPrice = 400;
 
+            if ((DeliveryPrice == null) | (DeliveryPrice == 0))
+            {
+                if (BoxAmount == 0)
+                {
+                    FinalAmount = 0;
+                }
+                else FinalAmount = BoxAmount + DeliveryPrice;
+            }
+            else FinalAmount = BoxAmount + DeliveryPrice;
+
+            if(PayMet == PaymentMethod.Card)
+            {
+                FinalAmount += (((BoxAmount + DeliveryPrice) * 2) / 100);
+            }
         }
     }
 }

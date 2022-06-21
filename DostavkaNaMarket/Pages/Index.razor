@@ -243,15 +243,18 @@
 
     public void Create()
     {
+        
         Console.WriteLine($"Город: {user.CitySell}");
 
         if(user.DateSell == User.Date.Среда)
         {
             Console.WriteLine($"Отправка в: {user.dateWednesday.ToString("dddd dd MMMM yyyy")}");
+            user.dateDB = user.dateWednesday.ToString("dddd dd MMMM yyyy");
         }
         else if(user.DateSell == User.Date.Понедельник)
         {
             Console.WriteLine($"Отправка в: {user.dateMonday.ToString("dddd dd MMMM yyyy")}");
+            user.dateDB = user.dateMonday.ToString("dddd dd MMMM yyyy");
         }
 
         Console.WriteLine($"ФИО: {user.ClientName}");
@@ -285,7 +288,7 @@
         BsonDocument doc = new BsonDocument 
         { 
             {"city",$"{user.CitySell}"},
-            {"dateDevivery",$"{user.DateSell}"},
+            {"dateDevivery",$"{user.dateDB}"},
             {"clientName",$"{user.ClientName}"},
             {"clientPhone",$"{user.ClientPhone}"},
             {"clientMail",$"{user.ClientMail}"},

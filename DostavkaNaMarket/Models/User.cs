@@ -72,6 +72,8 @@ namespace DostavkaNaMarket.Models
         public bool isChecked { get; set; }
         public Dictionary<string, object>? InputAttributesSubmit { get; set; }
 
+        public string? dateDB { get; set; }
+
         // Не красивый, но рабочий метод определения даты отправки
         public void DateDelivery()
         {

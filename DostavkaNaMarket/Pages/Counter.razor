@@ -1,4 +1,5 @@
 ﻿@page "/contacts"
+@inject ILoggerFactory LoggerFactory
 
 <PageTitle>Counter</PageTitle>
 
@@ -13,6 +14,8 @@
 
     private void IncrementCount()
     {
+        var logger = LoggerFactory.CreateLogger<Counter>();
+        logger.LogWarning($"Someone has clicked me! {currentCount}");
         currentCount++;
     }
 }

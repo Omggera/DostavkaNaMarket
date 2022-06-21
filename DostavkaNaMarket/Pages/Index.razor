@@ -1,6 +1,9 @@
 ﻿@page "/"
 @using DostavkaNaMarket.Data
 @using DostavkaNaMarket.Models
+@using MongoDB.Bson
+@using MongoDB.Driver
+
 @inject NavigationManager NavigationManager
 
 
@@ -234,7 +237,11 @@
 @code{
     public User user = new User();
 
-    void Create()
+    public MongoConnect newConnect = new MongoConnect();
+
+    string connectionString = "mongodb://localhost:27017";
+
+    public void Create()
     {
         Console.WriteLine($"Город: {user.CitySell}");
 
@@ -271,6 +278,23 @@
         }
 
         Console.WriteLine($"Итого к оплате {user.FinalAmount}");
+
+        MongoClient client = new MongoClient(connectionString);
+        IMongoDatabase database = client.GetDatabase("test");
+        var collection = database.GetCollection<BsonDocument>("users");
+        BsonDocument doc = new BsonDocument 
+        { 
+            {"city",$"{user.CitySell}"},
+            {"dateDevivery",$"{user.DateSell}"},
+            {"clientName",$"{user.ClientName}"},
+            {"clientPhone",$"{user.ClientPhone}"},
+            {"clientMail",$"{user.ClientMail}"},
+            {"getMethod",$"{user.OfDelSell}"},
+            {"clientAdress",$"{user.ClientAdress}"},
+            {"paymentMethod",$"{user.PayMet}"},
+            {"finalAmount",$"{user.FinalAmount}"}
+        };
+        collection.InsertOne(doc);
     }
 
     void StepPreview()
@@ -281,5 +305,5 @@
         }
         
     }
-
+    
 }

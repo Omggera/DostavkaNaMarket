@@ -3,6 +3,8 @@
 @using DostavkaNaMarket.Pages
 
 
+<EditForm Model="user">
+
 <div class="text-center">
     <div>
         <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
@@ -14,8 +16,11 @@
         <h3>Ваша заявка оформлена!</h3>
     </div>
     <div class="my-3">
-        @if(user.OfDelSell == User.OfficeOrDelivery.Sam)
+        @if(user.OfDelSell != null)
         {
+            <p class="fs-5">хер тебе 1</p>
+            <p class="fs-5">@user.OfDelSell</p>
+            <p class="fs-5">@user.DateSell</p>
             if(user.DateSell == User.Date.Понедельник)
             {
                 <p class="fs-5">
@@ -25,13 +30,15 @@
             }
             
         }
+        else
+        {
+            <p class="fs-5">хер тебе 2</p>
+        }
         <p class="fs-5">@user.ClientName</p>
     </div>
     
-    
 </div>
-
-
+</EditForm>
 
 @code {
     User user = new User();

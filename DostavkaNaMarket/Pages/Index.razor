@@ -237,65 +237,70 @@
 @code{
     public User user = new User();
 
-    public MongoConnect newConnect = new MongoConnect();
-
     string connectionString = "mongodb://localhost:27017";
 
     public void Create()
     {
-        
-        Console.WriteLine($"Город: {user.CitySell}");
-
+        // Дата
         if(user.DateSell == User.Date.Среда)
         {
-            Console.WriteLine($"Отправка в: {user.dateWednesday.ToString("dddd dd MMMM yyyy")}");
             user.dateDB = user.dateWednesday.ToString("dddd dd MMMM yyyy");
         }
         else if(user.DateSell == User.Date.Понедельник)
         {
-            Console.WriteLine($"Отправка в: {user.dateMonday.ToString("dddd dd MMMM yyyy")}");
             user.dateDB = user.dateMonday.ToString("dddd dd MMMM yyyy");
         }
 
-        Console.WriteLine($"ФИО: {user.ClientName}");
-        Console.WriteLine($"Номер телефона: {user.ClientPhone}");
-        Console.WriteLine($"Адрес электронной почты: {user.ClientMail}");
-
+        // Метод получения
         if(user.OfDelSell == User.OfficeOrDelivery.Sam)
         {
-            Console.WriteLine($"Способ получения: Привезет самостоятельно");
+            user.getMethodDB = "Привезет самостоятельно";
         }
         else if(user.OfDelSell == User.OfficeOrDelivery.Vivoz)
         {
-            Console.WriteLine($"Способ получения: Нужен вывоз");
-            Console.WriteLine($"Адрес: {user.ClientAdress}");
+            user.getMethodDB = "Нужен вывоз";
         }
 
+        // Способ оплаты
         if(user.PayMet == User.PaymentMethod.Cash)
         {
-            Console.WriteLine($"Способ оплаты: Наличные");
+            user.paymentMethodDB = "Наличные";
         }
         else if(user.PayMet == User.PaymentMethod.Card)
         {
-            Console.WriteLine($"Способ оплаты: Карта");
+            user.paymentMethodDB = "Карта";
         }
 
-        Console.WriteLine($"Итого к оплате {user.FinalAmount}");
+
 
         MongoClient client = new MongoClient(connectionString);
         IMongoDatabase database = client.GetDatabase("test");
         var collection = database.GetCollection<BsonDocument>("users");
+
+        var lastId = collection.Find(new BsonDocument()).Sort("{_id:-1}").Limit(1).ToList();
+
+
+        user.userIdDB = "asdqwezzz";
+        Console.WriteLine(lastId);
+        foreach(var l in lastId)
+        {
+            Console.WriteLine(l);
+        }
+        
+
         BsonDocument doc = new BsonDocument 
         { 
+            {"_id",$"{user.userIdDB}"},
             {"city",$"{user.CitySell}"},
             {"dateDevivery",$"{user.dateDB}"},
             {"clientName",$"{user.ClientName}"},
             {"clientPhone",$"{user.ClientPhone}"},
             {"clientMail",$"{user.ClientMail}"},
-            {"getMethod",$"{user.OfDelSell}"},
+            {"getMethod",$"{user.getMethodDB}"},
             {"clientAdress",$"{user.ClientAdress}"},
-            {"paymentMethod",$"{user.PayMet}"},
-            {"finalAmount",$"{user.FinalAmount}"}
+            {"paymentMethod",$"{user.paymentMethodDB}"},
+            {"finalAmount",$"{user.FinalAmount}"},
+            {"barcodes", new BsonArray(user.AllNumbersBarcode)}
         };
         collection.InsertOne(doc);
     }

@@ -48,7 +48,7 @@ namespace DostavkaNaMarket.Models
         }
 
         // получаем один документ по id
-        public async Task<User> GetComputer(string id)
+        public async Task<User> GetUserId(string id)
         {
             return await Users.Find(new BsonDocument("_id", new ObjectId(id))).FirstOrDefaultAsync();
         }
@@ -60,7 +60,7 @@ namespace DostavkaNaMarket.Models
         // обновление документа
         public async Task Update(User c)
         {
-            await Users.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(c.userIdDB)), c);
+            await Users.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(c.Id)), c);
         }
         // удаление документа
         public async Task Remove(string id)

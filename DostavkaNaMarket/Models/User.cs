@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System;
 using Microsoft.AspNetCore.Components.Web;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace DostavkaNaMarket.Models
 {
@@ -77,8 +78,8 @@ namespace DostavkaNaMarket.Models
         public string? getMethodDB { get; set; }
         public string? paymentMethodDB { get; set; }
 
-        [BsonId]
-        public string userIdDB { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
         // Не красивый, но рабочий метод определения даты отправки
         public void DateDelivery()

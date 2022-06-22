@@ -277,20 +277,8 @@
         IMongoDatabase database = client.GetDatabase("test");
         var collection = database.GetCollection<BsonDocument>("users");
 
-        var lastId = collection.Find(new BsonDocument()).Sort("{_id:-1}").Limit(1).ToList();
-
-
-        user.userIdDB = "asdqwezzz";
-        Console.WriteLine(lastId);
-        foreach(var l in lastId)
-        {
-            Console.WriteLine(l);
-        }
-        
-
         BsonDocument doc = new BsonDocument 
         { 
-            {"_id",$"{user.userIdDB}"},
             {"city",$"{user.CitySell}"},
             {"dateDevivery",$"{user.dateDB}"},
             {"clientName",$"{user.ClientName}"},

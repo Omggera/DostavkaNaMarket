@@ -81,7 +81,7 @@ namespace DostavkaNaMarket.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id { get; set; }
 
-        public int? orderNum { get; set; }
+        public long? orderNum { get; set; }
         
 
         // Не красивый, но рабочий метод определения даты отправки

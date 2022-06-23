@@ -271,7 +271,7 @@
             user.paymentMethodDB = "Карта";
         }
 
-
+        
 
         MongoClient client = new MongoClient(connectionString);
         IMongoDatabase database = client.GetDatabase("test");
@@ -279,6 +279,7 @@
 
         BsonDocument doc = new BsonDocument 
         { 
+            {"orderNum",$"{user.orderNum}"},
             {"city",$"{user.CitySell}"},
             {"dateDevivery",$"{user.dateDB}"},
             {"clientName",$"{user.ClientName}"},
@@ -291,6 +292,25 @@
             {"barcodes", new BsonArray(user.AllNumbersBarcode)}
         };
         collection.InsertOne(doc);
+        Console.WriteLine(doc.IndexOfName("orderNum"));
+
+        
+        var dictionary = doc.ToDictionary();
+        string? numb = dictionary["orderNum"].ToString();
+        int numbInt = Convert.ToInt32(numb);
+        if(numbInt > 0)
+        {
+            user.orderNum += 1;
+        }
+        Console.WriteLine(numb);
+
+
+        //for(int i = 0; i < numbInt; i++)
+        //{
+        //    user.orderNum += i;
+        //}
+
+        
     }
 
     void StepPreview()

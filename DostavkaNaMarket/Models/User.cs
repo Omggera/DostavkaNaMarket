@@ -79,7 +79,10 @@ namespace DostavkaNaMarket.Models
         public string? paymentMethodDB { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public ObjectId Id { get; set; }
+
+        public int? orderNum { get; set; }
+        
 
         // Не красивый, но рабочий метод определения даты отправки
         public void DateDelivery()

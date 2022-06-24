@@ -1,11 +1,12 @@
 ﻿@page "/preview"
 @using DostavkaNaMarket.Models
 @using DostavkaNaMarket.Pages
+@using System.Text.RegularExpressions
 
 
-<EditForm Model="user">
 
 <div class="text-center">
+    <div class="container">
     <div>
         <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -16,30 +17,93 @@
         <h3>Ваша заявка оформлена!</h3>
     </div>
     <div class="my-3">
-        @if(user.OfDelSell != null)
+        @if(mongo.DataForPreview("getMethod") == "Привезет самостоятельно")
         {
-            <p class="fs-5">хер тебе 1</p>
-            <p class="fs-5">@user.OfDelSell</p>
-            <p class="fs-5">@user.DateSell</p>
-            if(user.DateSell == User.Date.Понедельник)
+            if(Regex.IsMatch(mongo.DataForPreview("dateDevivery"), "\\bпонедельник\\b"))
             {
-                <p class="fs-5">
-                    Для того чтобы мы отправили вашу поставку в Понедельник, вам нужно привезти нам её со вторника по четверг включительно
-                    с 10 до 19 по адресу г. Владимир, ул. Ново-Ямская, д. 75
-                </p>
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-6">
+                      <p class="fs-5">
+                        Для того чтобы мы отправили вашу поставку в Понедельник, вам нужно привезти её нам со вторника по четверг включительно
+                        с 10 до 19, либо в день отправки с 10 до 11 по адресу г. Владимир, ул. Ново-Ямская, д. 75
+                      </p>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-6">
+                      <p class="fs-5">
+                        Подробнее о режиме работы вы можете узнать в разделе <a href="/contacts">Контакты</a> или позвонив по телефону +7(901)141-8686
+                      </p>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-6">
+                      <p class="fs-5">
+                        Для того чтобы мы отправили вашу поставку в Среду, вам нужно привезти её нам с понедельника по вторник включительно
+                        с 10 до 19, либо в день отправки с 10 до 11 по адресу г. Владимир, ул. Ново-Ямская, д. 75
+                      </p>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-6">
+                      <p class="fs-5">
+                        Подробнее о режиме работы вы можете узнать в разделе <a href="/contacts">Контакты</a> или позвонив по телефону +7(901)141-8686
+                      </p>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
             }
             
         }
         else
         {
-            <p class="fs-5">хер тебе 2</p>
+            <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-6">
+                      <p class="fs-5">
+                        В ближайшее время с вами свяжется наш менеджер для уточнения деталей вывоза. Обратитите внимание - 
+                        погрузочные работы осуществляются силами заказчика и в стоимость вывоза не входят.
+                      </p>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col-6">
+                      <p class="fs-5">
+                        Подробнее о режиме работы вы можете узнать в разделе <a href="/contacts">Контакты</a> или позвонив по телефону +7(901)141-8686
+                      </p>
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
         }
-        <p class="fs-5">@user.ClientName</p>
+    </div>
     </div>
     
 </div>
-</EditForm>
 
 @code {
-    User user = new User();
+    MongoDB mongo = new MongoDB();
 }

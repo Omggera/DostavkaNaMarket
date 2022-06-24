@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using DostavkaNaMarket.Data
 @using DostavkaNaMarket.Models
 @using MongoDB.Bson
 @using MongoDB.Driver
@@ -238,8 +237,6 @@
     User user = new User();
     MongoDB mongo = new MongoDB();
 
-    //string connectionString = "mongodb://localhost:27017";
-
     public void Create()
     {
         // Дата
@@ -291,26 +288,6 @@
         };
 
         mongo.AddDoc(doc).GetAwaiter();
-        
-        //Console.WriteLine(doc.IndexOfName("orderNum"));
-
-        
-        var dictionary = doc.ToDictionary();
-        string? numb = dictionary["orderNum"].ToString();
-        int numbInt = Convert.ToInt32(numb);
-        //if(numbInt > 0)
-        //{
-        //    user.orderNum += 1;
-        //}
-        //Console.WriteLine(numb);
-
-
-        //for(int i = 0; i < numbInt; i++)
-        //{
-        //    user.orderNum += i;
-        //}
-
-        
     }
 
     void StepPreview()

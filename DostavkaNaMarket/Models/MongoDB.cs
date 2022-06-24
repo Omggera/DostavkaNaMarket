@@ -23,16 +23,27 @@ namespace DostavkaNaMarket.Models
             get { return database.GetCollection<BsonDocument>("users"); }
         }
 
+        // Добавить документ
         public async Task AddDoc(BsonDocument doc)
         {
             await Collection.InsertOneAsync(doc);
         }
 
+        // Получить общее число документов в коллекции
         public long AllDocCount()
         {
             var filter = new BsonDocument();
             long count = Collection.CountDocuments(filter);
             return count;
+        }
+
+        public string DataForPreview(string field)
+        {
+            var filter = new BsonDocument("orderNum", $"{AllDocCount()}");
+            var user = Collection.Find(filter).FirstOrDefault();
+            var dictionary = user.ToDictionary();
+            string? dataForPrev = dictionary[field].ToString();
+            return dataForPrev;
         }
     }
 }

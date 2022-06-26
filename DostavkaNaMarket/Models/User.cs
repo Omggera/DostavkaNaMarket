@@ -39,6 +39,7 @@ namespace DostavkaNaMarket.Models
         [DataType(DataType.PhoneNumber)]
         public string? ClientPhone { get; set; }
 
+        [DataType(DataType.EmailAddress)]
         public string? ClientMail { get; set; }
 
         public enum OfficeOrDelivery
@@ -48,7 +49,7 @@ namespace DostavkaNaMarket.Models
         }
         public OfficeOrDelivery? OfDelSell { get; set; } = OfficeOrDelivery.Sam;
         public Dictionary<string, object>? InputAttributes { get; set; }
-        
+
         public string? ClientAdress { get; set; }
 
         public List<string> AllNumbersBarcode = new List<string>();

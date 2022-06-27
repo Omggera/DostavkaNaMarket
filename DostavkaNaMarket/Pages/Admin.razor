@@ -1,7 +1,25 @@
 ﻿@page "/admin"
+@attribute [Authorize(Roles ="Administrator")]
 
-<h3>Admin</h3>
+@using DostavkaNaMarket.Authentication
+
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
+
+<AuthorizeView>
+    <Authorized>
+        <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
+    </Authorized>
+    <NotAuthorized>
+        Your are not authorized
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
-
+    private async Task Logout()
+    {
+        var customAuthStateProvider = (CustomAuthStateProvider)authStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(null);
+        navManager.NavigateTo("/login", true);
+    }
 }

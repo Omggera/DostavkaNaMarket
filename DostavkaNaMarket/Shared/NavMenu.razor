@@ -29,6 +29,16 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> login
             </NavLink>
         </div>
+
+        <AuthorizeView Roles="Administrator">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="admin">
+                        <span class="oi oi-star" aria-hidden="true"></span> Управление
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
     </nav>
 </div>
 

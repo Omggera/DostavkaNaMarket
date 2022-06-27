@@ -1,5 +1,14 @@
 ﻿@page "/conditions"
 
+<AuthorizeView>
+    <Authorized>
+        Welcome!
+    </Authorized>
+    <NotAuthorized>
+        Your are not authorized
+    </NotAuthorized>
+</AuthorizeView>
+
 <PageTitle>Условия</PageTitle>
 
 @code {

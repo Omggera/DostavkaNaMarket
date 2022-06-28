@@ -2,13 +2,92 @@
 @attribute [Authorize(Roles ="Administrator")]
 
 @using DostavkaNaMarket.Authentication
+@using BlazorDateRangePicker
 
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
 
 <AuthorizeView>
     <Authorized>
-        <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
+        <body>
+            <div class="container">
+              <main>
+                <div class="row g-5"> 
+
+                  <div class="col">
+                    <h4 class="mb-3">Управление</h4>
+                      <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="date" class="form-label">Период выборки</label>
+                            <DateRangePicker class="form-control" @bind-StartDate="StartDate" @bind-EndDate="EndDate" />
+                        </div>
+                        <div class="col"></div>
+                        <div class="col"></div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col">
+                            <label for="phoneNumber" class="form-label">Телефон</label>
+                            <div class="input-group has-validation">
+                                <input class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="email" class="form-label">Адрес электронной почты</label>
+                            <input type="email" class="form-control" id="email"/>
+                        </div>
+                        <div class="col">
+                            
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col">
+                            <label for="orderNum" class="form-label">Заказ №</label>
+                            <input class="form-control"/>
+                        </div>
+                        <div class="col">
+                            <label for="check" class="form-label">Способ оплаты</label>
+                            <div class="form">
+                                <input type="radio" class="btn-check" name="options-outlined" id="primary-outlined" checked>
+                                <label class="btn btn-outline-primary" for="primary-outlined">Все</label>
+
+                                <input type="radio" class="btn-check" name="options-outlined" id="primary-outlined-2">
+                                <label class="btn btn-outline-primary" for="primary-outlined-2">Наличные</label>
+
+                                <input type="radio" class="btn-check" name="options-outlined" id="primary-outlined-3">
+                                <label class="btn btn-outline-primary" for="primary-outlined-3">Карта</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="check" class="form-label">Способ получения</label>
+                            <div class="form">
+                                <input type="radio" class="btn-check" name="options-outlined-1" id="primary-outlined-4" checked>
+                                <label class="btn btn-outline-primary" for="primary-outlined-4">Все</label>
+
+                                <input type="radio" class="btn-check" name="options-outlined-1" id="primary-outlined-5">
+                                <label class="btn btn-outline-primary" for="primary-outlined-5">Сам привез</label>
+
+                                <input type="radio" class="btn-check" name="options-outlined-1" id="primary-outlined-6">
+                                <label class="btn btn-outline-primary" for="primary-outlined-6">Вывоз</label>
+                            </div>
+                        </div>
+                      </div>
+                      <hr class="my-4">
+
+                      <hr class="my-4">
+                      <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
+                      <hr class="my-4">
+                  </div>
+                </div>
+              </main>
+
+              <footer class="my-5 pt-5 text-muted text-center text-small">
+                <p class="mb-1">© 2021–2022 Доставка на маркет</p>
+              </footer>
+            </div>
+            </body>
+        
     </Authorized>
     <NotAuthorized>
         Your are not authorized
@@ -22,4 +101,7 @@
         await customAuthStateProvider.UpdateAuthenticationState(null);
         navManager.NavigateTo("/login", true);
     }
+
+    DateTimeOffset? StartDate { get; set; } = DateTime.Today.AddMonths(-1);
+    DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
 }

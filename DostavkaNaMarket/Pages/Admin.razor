@@ -3,6 +3,8 @@
 
 @using DostavkaNaMarket.Authentication
 @using BlazorDateRangePicker
+@using MongoDB.Bson
+@using MongoDB.Driver
 
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
@@ -10,7 +12,6 @@
 <AuthorizeView>
     <Authorized>
         <body>
-            <div class="container">
               <main>
                 <div class="row g-5"> 
 
@@ -26,27 +27,27 @@
                       </div>
 
                       <div class="row mb-3">
-                        <div class="col">
+                        <div class="col-4">
                             <label for="phoneNumber" class="form-label">Телефон</label>
                             <div class="input-group has-validation">
                                 <input class="form-control"/>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-3">
                             <label for="email" class="form-label">Адрес электронной почты</label>
                             <input type="email" class="form-control" id="email"/>
                         </div>
-                        <div class="col">
+                        <div class="col-5">
                             
                         </div>
                       </div>
 
                       <div class="row mb-3">
-                        <div class="col">
+                        <div class="col-4">
                             <label for="orderNum" class="form-label">Заказ №</label>
                             <input class="form-control"/>
                         </div>
-                        <div class="col">
+                        <div class="col-3">
                             <label for="check" class="form-label">Способ оплаты</label>
                             <div class="form">
                                 <input type="radio" class="btn-check" name="options-outlined" id="primary-outlined" checked>
@@ -59,7 +60,7 @@
                                 <label class="btn btn-outline-primary" for="primary-outlined-3">Карта</label>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-4">
                             <label for="check" class="form-label">Способ получения</label>
                             <div class="form">
                                 <input type="radio" class="btn-check" name="options-outlined-1" id="primary-outlined-4" checked>
@@ -72,9 +73,61 @@
                                 <label class="btn btn-outline-primary" for="primary-outlined-6">Вывоз</label>
                             </div>
                         </div>
+                        <div class="col-1">
+                            
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-1">
+                            <button class="w-100 btn btn-primary" type="submit" value="">Найти</button>
+                        </div>
+                        <div class="col"></div>
+                        <div class="col"></div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-4"></div>
+                        <div class="col-3"></div>
+                        <div class="col-5"> </div>
                       </div>
                       <hr class="my-4">
+                        <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col">Заказ №</th>
+                              <th scope="col">Город</th>
+                              <th scope="col">Дата поставки</th>
+                              <th scope="col">Имя</th>
+                              <th scope="col">Телефон</th>
+                              <th scope="col">Почта</th>
+                              <th scope="col">Получение</th>
+                              <th scope="col">Адрес</th>
+                              <th scope="col">Оплата</th>
+                              <th scope="col">Сумма</th>
+                              <th scope="col">ШК</th>
 
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @{mongo.FindDocs(bsonDocuments);}
+                               
+                            @foreach(var doc in bsonDocuments)
+                            {   <tr onclick="">
+                                    <th scope="row">@doc["orderNum"]</th>
+                                    <td>@doc["city"]</td>
+                                    <td>@doc["dateDevivery"]</td>
+                                    <td>@doc["clientName"]</td>
+                                    <td>@doc["clientPhone"]</td>
+                                    <td>@doc["clientMail"]</td>
+                                    <td>@doc["getMethod"]</td>
+                                    <td>@doc["clientAdress"]</td>
+                                    <td>@doc["paymentMethod"]</td>
+                                    <td>@doc["finalAmount"]</td>
+                                    <td>@doc["barcodes"]</td>
+                                </tr>
+                            }
+                          </tbody>
+                        </table>
                       <hr class="my-4">
                       <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
                       <hr class="my-4">
@@ -85,7 +138,6 @@
               <footer class="my-5 pt-5 text-muted text-center text-small">
                 <p class="mb-1">© 2021–2022 Доставка на маркет</p>
               </footer>
-            </div>
             </body>
         
     </Authorized>
@@ -95,6 +147,11 @@
 </AuthorizeView>
 
 @code {
+    MongoDB mongo = new MongoDB();
+    List<BsonDocument> bsonDocuments = new List<BsonDocument>();
+    
+
+
     private async Task Logout()
     {
         var customAuthStateProvider = (CustomAuthStateProvider)authStateProvider;

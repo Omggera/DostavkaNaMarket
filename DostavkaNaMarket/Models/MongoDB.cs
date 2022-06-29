@@ -45,5 +45,15 @@ namespace DostavkaNaMarket.Models
             string? dataForPrev = dictionary[field].ToString();
             return dataForPrev;
         }
+
+        public void FindDocs(List<BsonDocument> list)
+        {
+            var filter = new BsonDocument();
+            var people =  Collection.Find(filter).ToList();
+            foreach (var doc in people)
+            {
+                list.Add(doc);
+            }
+        }
     }
 }

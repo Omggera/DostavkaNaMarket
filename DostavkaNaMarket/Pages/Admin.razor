@@ -12,17 +12,35 @@
 <AuthorizeView>
     <Authorized>
         <body>
+            <EditForm Model="adminModel" Context="another_name" OnSubmit="RestartSearch">
               <main>
                 <div class="row g-5"> 
-
                   <div class="col">
-                    <h4 class="mb-3">Управление</h4>
+                    <h4 class="mb-3 text-center">Управление</h4>
                       <div class="row mb-3">
                         <div class="col-3">
                             <label for="date" class="form-label">Период выборки</label>
-                            <DateRangePicker class="form-control" @bind-StartDate="StartDate" @bind-EndDate="EndDate" />
+                            @if(adminModel.isChecked)
+                            {
+                                <DateRangePicker class="form-control" AutoApply="true" @bind-StartDate="StartDate" @bind-EndDate="EndDate" disabled/>
+                                StartDate = null;
+                                EndDate = null;
+                            }
+                            else if(!adminModel.isChecked)
+                            {
+                                <DateRangePicker class="form-control" AutoApply="true" @bind-StartDate="StartDate" @bind-EndDate="EndDate" />
+                            }
+                            
                         </div>
-                        <div class="col"></div>
+                        <div class="col-1">
+                            <label for="date" class="form-label">За всё время</label>
+                            <div class="boxed-check-group boxed-check-outline-primary">
+                                <label class="boxed-check small">
+                                  <InputCheckbox class="boxed-check-input" type="checkbox" @bind-Value="adminModel.isChecked"/>
+                                  <div class="boxed-check-label text-center">Все</div>
+                                </label>
+                            </div>
+                        </div>
                         <div class="col"></div>
                       </div>
 
@@ -30,12 +48,12 @@
                         <div class="col-4">
                             <label for="phoneNumber" class="form-label">Телефон</label>
                             <div class="input-group has-validation">
-                                <input class="form-control"/>
+                                <InputText class="form-control" id="phoneNumber" @bind-Value="adminModel.PhoneNumber"/>
                             </div>
                         </div>
                         <div class="col-3">
                             <label for="email" class="form-label">Адрес электронной почты</label>
-                            <input type="email" class="form-control" id="email"/>
+                            <InputText type="email" class="form-control" id="email" @bind-Value="adminModel.Email"/>
                         </div>
                         <div class="col-5">
                             
@@ -45,33 +63,45 @@
                       <div class="row mb-3">
                         <div class="col-4">
                             <label for="orderNum" class="form-label">Заказ №</label>
-                            <input class="form-control"/>
+                            <InputText class="form-control" id="orderNum" @bind-Value="adminModel.OrderNumber"/>
                         </div>
                         <div class="col-3">
                             <label for="check" class="form-label">Способ оплаты</label>
-                            <div class="form">
-                                <input type="radio" class="btn-check" name="options-outlined" id="primary-outlined" checked>
-                                <label class="btn btn-outline-primary" for="primary-outlined">Все</label>
-
-                                <input type="radio" class="btn-check" name="options-outlined" id="primary-outlined-2">
-                                <label class="btn btn-outline-primary" for="primary-outlined-2">Наличные</label>
-
-                                <input type="radio" class="btn-check" name="options-outlined" id="primary-outlined-3">
-                                <label class="btn btn-outline-primary" for="primary-outlined-3">Карта</label>
+                            <InputRadioGroup Name="radio-overview-1" @bind-Value="adminModel.PayMet">
+                            <div class="boxed-check-group boxed-check-outline-primary">
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-1" Value="@AdminModel.PaymentMethod.All"/>
+                                    <div class="boxed-check-label">Все</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-1" Value="@AdminModel.PaymentMethod.Cash"/>
+                                    <div class="boxed-check-label">Наличные</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-1" Value="@AdminModel.PaymentMethod.Card"/>
+                                    <div class="boxed-check-label">Карта</div>
+                                </label>
                             </div>
+                            </InputRadioGroup>
                         </div>
                         <div class="col-4">
                             <label for="check" class="form-label">Способ получения</label>
-                            <div class="form">
-                                <input type="radio" class="btn-check" name="options-outlined-1" id="primary-outlined-4" checked>
-                                <label class="btn btn-outline-primary" for="primary-outlined-4">Все</label>
-
-                                <input type="radio" class="btn-check" name="options-outlined-1" id="primary-outlined-5">
-                                <label class="btn btn-outline-primary" for="primary-outlined-5">Сам привез</label>
-
-                                <input type="radio" class="btn-check" name="options-outlined-1" id="primary-outlined-6">
-                                <label class="btn btn-outline-primary" for="primary-outlined-6">Вывоз</label>
+                            <InputRadioGroup Name="radio-overview-2" @bind-Value="adminModel.GetMeth">
+                            <div class="boxed-check-group boxed-check-outline-primary">
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@AdminModel.GetMethod.All"/>
+                                    <div class="boxed-check-label">Все</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@AdminModel.GetMethod.Sam"/>
+                                    <div class="boxed-check-label">Сам привез</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@AdminModel.GetMethod.Vivoz"/>
+                                    <div class="boxed-check-label">Вывоз</div>
+                                </label>
                             </div>
+                            </InputRadioGroup>
                         </div>
                         <div class="col-1">
                             
@@ -95,6 +125,7 @@
                           <thead>
                             <tr>
                               <th scope="col">Заказ №</th>
+                              <th scope="col">Дата заказа</th>
                               <th scope="col">Город</th>
                               <th scope="col">Дата поставки</th>
                               <th scope="col">Имя</th>
@@ -108,12 +139,11 @@
 
                             </tr>
                           </thead>
-                          <tbody>
-                            @{mongo.FindDocs(bsonDocuments);}
-                               
+                          <tbody> 
                             @foreach(var doc in bsonDocuments)
                             {   <tr onclick="">
                                     <th scope="row">@doc["orderNum"]</th>
+                                    <td>@doc["dateOrder"]</td>
                                     <td>@doc["city"]</td>
                                     <td>@doc["dateDevivery"]</td>
                                     <td>@doc["clientName"]</td>
@@ -130,6 +160,17 @@
                         </table>
                       <hr class="my-4">
                       <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
+                      <p>@adminModel.PhoneNumber</p>
+                        <p>@adminModel.Email</p>
+                        <p>@adminModel.OrderNumber</p>
+                        <p>@adminModel.PayMet</p>
+                        <p>@adminModel.GetMeth</p>
+                            @{
+                                DateTimeOffset date = StartDate ?? DateTime.Now;
+
+                            }
+                        <p>@date.ToString("dddd dd MMMM yyyy")</p>
+                        <p>@EndDate</p>
                       <hr class="my-4">
                   </div>
                 </div>
@@ -138,6 +179,7 @@
               <footer class="my-5 pt-5 text-muted text-center text-small">
                 <p class="mb-1">© 2021–2022 Доставка на маркет</p>
               </footer>
+              </EditForm>
             </body>
         
     </Authorized>
@@ -148,9 +190,21 @@
 
 @code {
     MongoDB mongo = new MongoDB();
-    List<BsonDocument> bsonDocuments = new List<BsonDocument>();
-    
+    AdminModel adminModel = new AdminModel();
 
+    List<BsonDocument> bsonDocuments = new List<BsonDocument>();
+
+    public void RestartSearch()
+    {
+        bsonDocuments.Clear();
+        //mongo.FindAllDocs(bsonDocuments);
+        if (!adminModel.isChecked)
+        {
+            //bsonDocuments.Clear();
+            mongo.FindAllDateDocs(bsonDocuments, StartDate, EndDate);
+        }
+        
+    }
 
     private async Task Logout()
     {
@@ -161,4 +215,5 @@
 
     DateTimeOffset? StartDate { get; set; } = DateTime.Today.AddMonths(-1);
     DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
+    
 }

@@ -46,7 +46,7 @@ namespace DostavkaNaMarket.Models
             return dataForPrev;
         }
 
-        public void FindDocs(List<BsonDocument> list)
+        public void FindAllDocs(List<BsonDocument> list)
         {
             var filter = new BsonDocument();
             var people =  Collection.Find(filter).ToList();
@@ -54,6 +54,30 @@ namespace DostavkaNaMarket.Models
             {
                 list.Add(doc);
             }
+        }
+
+        public void FindAllDateDocs(List<BsonDocument> list, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            var builder = Builders<BsonDocument>.Filter;
+            var filter = builder.Gte("dateOrder", $"{startDate}") & builder.Lte("dateOrder", $"{endDate}");
+            //var filter = new BsonDocument("$and", new BsonArray{
+
+            //    new BsonDocument("dateOrder", new BsonDocument("$gte", $"{startDate}")),
+            //    new BsonDocument("dateOrder", new BsonDocument("$lte", $"{endDate}"))
+            //});
+            var people = Collection.Find(filter).ToList();
+            if (people.Count > 0)
+            {
+                foreach (var doc in people)
+                {
+                    list.Add(doc);
+                }
+            }
+            else
+            {
+                list.Clear();
+            }
+            
         }
     }
 }

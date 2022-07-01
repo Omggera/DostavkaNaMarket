@@ -242,11 +242,11 @@
         // Дата
         if(user.DateSell == User.Date.Среда)
         {
-            user.dateDB = user.dateWednesday.ToString("dddd dd MMMM yyyy");
+            user.dateDB = user.dateWednesday.ToString("ddd dd MMMM yy");
         }
         else if(user.DateSell == User.Date.Понедельник)
         {
-            user.dateDB = user.dateMonday.ToString("dddd dd MMMM yyyy");
+            user.dateDB = user.dateMonday.ToString("ddd dd MMMM yy");
         }
 
         // Метод получения
@@ -271,10 +271,12 @@
 
         user.orderNum = mongo.AllDocCount() + 1;
 
+
         //Добавляем данные в БД
         BsonDocument doc = new BsonDocument 
         { 
             {"orderNum",$"{user.orderNum}"},
+            {"dateOrder",$"{user.DateNewOrderUTC}"},
             {"city",$"{user.CitySell}"},
             {"dateDevivery",$"{user.dateDB}"},
             {"clientName",$"{user.ClientName}"},

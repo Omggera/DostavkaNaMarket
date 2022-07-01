@@ -83,6 +83,8 @@ namespace DostavkaNaMarket.Models
         public ObjectId Id { get; set; }
 
         public long? orderNum { get; set; }
+
+        public DateTimeOffset DateNewOrderUTC { get; set; } = DateTime.Now;
         
 
         // Не красивый, но рабочий метод определения даты отправки

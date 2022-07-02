@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using System.Configuration;
 using System.IO;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace DostavkaNaMarket.Models
 {
@@ -46,6 +47,7 @@ namespace DostavkaNaMarket.Models
             return dataForPrev;
         }
 
+        // Получение всех документов в коллекции
         public void FindAllDocs(List<BsonDocument> list)
         {
             var filter = new BsonDocument();
@@ -56,28 +58,43 @@ namespace DostavkaNaMarket.Models
             }
         }
 
-        public void FindAllDateDocs(List<BsonDocument> list, DateTimeOffset? startDate, DateTimeOffset? endDate)
-        {
-            var builder = Builders<BsonDocument>.Filter;
-            var filter = builder.Gte("dateOrder", $"{startDate}") & builder.Lte("dateOrder", $"{endDate}");
-            //var filter = new BsonDocument("$and", new BsonArray{
+        FilterDefinition<BsonDocument> filterAnd;
 
-            //    new BsonDocument("dateOrder", new BsonDocument("$gte", $"{startDate}")),
-            //    new BsonDocument("dateOrder", new BsonDocument("$lte", $"{endDate}"))
-            //});
-            var people = Collection.Find(filter).ToList();
-            if (people.Count > 0)
-            {
-                foreach (var doc in people)
-                {
-                    list.Add(doc);
-                }
-            }
-            else
-            {
-                list.Clear();
-            }
+        public void GlobalFilter(List<BsonDocument> list, string? startDate, string? phone, string? order,
+                                 string? email, string? getMethod, string? payMethod )
+        {
+            //var builder = Builders<BsonDocument>.Filter;
+            var filterDate = Builders<BsonDocument>.Filter.Eq("dateDevivery", $"{startDate}");
+            var filterPhone = Builders<BsonDocument>.Filter.Regex("clientPhone", new BsonRegularExpression($"{phone}"));
+            var filterOrder = Builders<BsonDocument>.Filter.Eq("orderNum", $"{order}");
+            var filterEmail = Builders<BsonDocument>.Filter.Regex("clientMail", new BsonRegularExpression($"{email}"));
+            var filterGetMethod = Builders<BsonDocument>.Filter.Eq("getMethod", $"{getMethod}");
+            var filterPayMethod = Builders<BsonDocument>.Filter.Eq("paymentMethod", $"{payMethod}");
+
+            if (startDate == null) filterDate = Builders<BsonDocument>.Filter.Ne("dateDevivery", $"{startDate}");
+            if (phone == null) filterPhone = Builders<BsonDocument>.Filter.Ne("clientPhone", $"{phone}");
+            if (order == null) filterOrder = Builders<BsonDocument>.Filter.Ne("orderNum", $"{order}");
+            if (email == null) filterEmail = Builders<BsonDocument>.Filter.Ne("clientMail", $"{email}");
+            if (getMethod == "Все") filterGetMethod = Builders<BsonDocument>.Filter.Ne("getMethod", $"{getMethod}");
+            if (payMethod == "Все") filterPayMethod = Builders<BsonDocument>.Filter.Ne("paymentMethod", $"{payMethod}");
+
+            filterAnd = Builders<BsonDocument>.Filter.And(new List<FilterDefinition<BsonDocument>> 
+            { 
+                filterDate,
+                filterPhone,
+                filterOrder,
+                filterEmail,
+                filterPayMethod, 
+                filterGetMethod
+            });
             
+            var people = Collection.Find(filterAnd).ToList();
+            foreach (var doc in people)
+            {
+                list.Add(doc);
+            }
+
         }
+
     }
 }

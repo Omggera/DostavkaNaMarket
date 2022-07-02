@@ -19,16 +19,18 @@
                     <h4 class="mb-3 text-center">Управление</h4>
                       <div class="row mb-3">
                         <div class="col-3">
-                            <label for="date" class="form-label">Период выборки</label>
+                            <label for="date" class="form-label">Дата отправки</label>
                             @if(adminModel.isChecked)
                             {
-                                <DateRangePicker class="form-control" AutoApply="true" @bind-StartDate="StartDate" @bind-EndDate="EndDate" disabled/>
+                                <DateRangePicker class="form-control" AutoApply="true" SingleDatePicker="true" 
+                                @bind-StartDate="StartDate" @bind-EndDate="EndDate" disabled/>
                                 StartDate = null;
                                 EndDate = null;
                             }
                             else if(!adminModel.isChecked)
                             {
-                                <DateRangePicker class="form-control" AutoApply="true" @bind-StartDate="StartDate" @bind-EndDate="EndDate" />
+                                <DateRangePicker class="form-control" AutoApply="true" SingleDatePicker="true" 
+                                @bind-StartDate="StartDate" @bind-EndDate="EndDate" />
                             }
                             
                         </div>
@@ -46,14 +48,12 @@
 
                       <div class="row mb-3">
                         <div class="col-4">
-                            <label for="phoneNumber" class="form-label">Телефон</label>
-                            <div class="input-group has-validation">
-                                <InputText class="form-control" id="phoneNumber" @bind-Value="adminModel.PhoneNumber"/>
-                            </div>
+                            <label class="form-label">Телефон</label>
+                            <InputText class="form-control" id="phoneNumber" @bind-Value="adminModel.PhoneNumber"/>
                         </div>
                         <div class="col-3">
-                            <label for="email" class="form-label">Адрес электронной почты</label>
-                            <InputText type="email" class="form-control" id="email" @bind-Value="adminModel.Email"/>
+                            <label class="form-label">Адрес электронной почты</label>
+                            <InputText  class="form-control" id="email" @bind-Value="adminModel.Email"/>
                         </div>
                         <div class="col-5">
                             
@@ -125,7 +125,6 @@
                           <thead>
                             <tr>
                               <th scope="col">Заказ №</th>
-                              <th scope="col">Дата заказа</th>
                               <th scope="col">Город</th>
                               <th scope="col">Дата поставки</th>
                               <th scope="col">Имя</th>
@@ -143,7 +142,6 @@
                             @foreach(var doc in bsonDocuments)
                             {   <tr onclick="">
                                     <th scope="row">@doc["orderNum"]</th>
-                                    <td>@doc["dateOrder"]</td>
                                     <td>@doc["city"]</td>
                                     <td>@doc["dateDevivery"]</td>
                                     <td>@doc["clientName"]</td>
@@ -152,7 +150,7 @@
                                     <td>@doc["getMethod"]</td>
                                     <td>@doc["clientAdress"]</td>
                                     <td>@doc["paymentMethod"]</td>
-                                    <td>@doc["finalAmount"]</td>
+                                    <td>@doc["finalAmount"] руб</td>
                                     <td>@doc["barcodes"]</td>
                                 </tr>
                             }
@@ -170,7 +168,6 @@
 
                             }
                         <p>@date.ToString("dddd dd MMMM yyyy")</p>
-                        <p>@EndDate</p>
                       <hr class="my-4">
                   </div>
                 </div>
@@ -194,16 +191,39 @@
 
     List<BsonDocument> bsonDocuments = new List<BsonDocument>();
 
+    public string ConvertDate()
+    {
+        DateTimeOffset date = StartDate ?? DateTime.Now;
+        return date.ToString("ddd dd MMMM yy");
+    }
+
     public void RestartSearch()
     {
+        string? GetMeth = "Все";
+        string? PayMet = "Все";
+
+        if (adminModel.GetMeth == AdminModel.GetMethod.All) GetMeth = "Все";
+        else if (adminModel.GetMeth == AdminModel.GetMethod.Sam) GetMeth = "Привезет самостоятельно";
+        else if (adminModel.GetMeth == AdminModel.GetMethod.Vivoz) GetMeth = "Нужен вывоз";
+
+        if (adminModel.PayMet == AdminModel.PaymentMethod.All) PayMet = "Все";
+        else if (adminModel.PayMet == AdminModel.PaymentMethod.Cash) PayMet = "Наличные";
+        else if (adminModel.PayMet == AdminModel.PaymentMethod.Card) PayMet = "Карта";
+
         bsonDocuments.Clear();
-        //mongo.FindAllDocs(bsonDocuments);
+
         if (!adminModel.isChecked)
         {
-            //bsonDocuments.Clear();
-            mongo.FindAllDateDocs(bsonDocuments, StartDate, EndDate);
+            bsonDocuments.Clear();
+            mongo.GlobalFilter(bsonDocuments, ConvertDate(), adminModel.PhoneNumber, adminModel.OrderNumber, adminModel.Email, GetMeth, PayMet);
         }
-        
+        else
+        {
+            bsonDocuments.Clear();
+            string? date = null;
+            mongo.GlobalFilter(bsonDocuments, date, adminModel.PhoneNumber, adminModel.OrderNumber, adminModel.Email, GetMeth, PayMet);
+        }
+
     }
 
     private async Task Logout()
@@ -213,7 +233,7 @@
         navManager.NavigateTo("/login", true);
     }
 
-    DateTimeOffset? StartDate { get; set; } = DateTime.Today.AddMonths(-1);
+    DateTimeOffset? StartDate { get; set; } = DateTime.Today;
     DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
     
 }

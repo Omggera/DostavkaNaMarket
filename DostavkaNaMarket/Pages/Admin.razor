@@ -141,8 +141,9 @@
                           <tbody> 
                             @foreach(var doc in bsonDocuments)
                             {   
-                                <tr data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Click" Value="@doc["orderNum"]">
-                                    <th scope="row">@doc["orderNum"]</th>
+                                order = doc["orderNum"].ToString();
+                                <tr data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Click" @bind-value="order" @bind-value:event="oninput">
+                                    <th scope="row" >@doc["orderNum"]</th>
                                     <td>@doc["city"]</td>
                                     <td>@doc["dateDevivery"]</td>
                                     <td>@doc["clientName"]</td>

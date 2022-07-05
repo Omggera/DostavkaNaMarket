@@ -1,6 +1,7 @@
-﻿function OrderModal() {
-    var Row = document.getElementById("1");
-    var Cells = Row.getElementsByTagName("td");
-    var Amount = Cells[2].innerText;
-    return Amount;
+﻿function OrderModal(doc) {
+    console.log("doc:", doc);
+    //var Row = document.getElementById(id);
+    //var Cells = Row.getElementsByTagName("td");
+    //var Amount = Cells[2].innerText;
+    return doc;
 }

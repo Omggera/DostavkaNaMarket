@@ -10,6 +10,8 @@
 @inject NavigationManager navManager
 @inject IJSRuntime JSRuntime
 
+@inject ILoggerFactory LoggerF
+
 <AuthorizeView>
     <Authorized>
         <body>
@@ -36,7 +38,7 @@
                             
                         </div>
                         <div class="col-1">
-                            <label for="date" class="form-label">За всё время</label>
+                            <label for="date" class="form-label">Все даты</label>
                             <div class="boxed-check-group boxed-check-outline-primary">
                                 <label class="boxed-check small">
                                   <InputCheckbox class="boxed-check-input" type="checkbox" @bind-Value="adminModel.isChecked"/>
@@ -142,8 +144,7 @@
                           <tbody> 
                             @foreach(var doc in bsonDocuments)
                             {   
-                                order = doc["orderNum"].ToString();
-                                <tr class="myclass" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="OrderModal" id="@doc["orderNum"]">
+                                <tr class="myclass" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="args => OrderModal(doc, args)" id="@doc["orderNum"]">
                                     <th scope="row" >@doc["orderNum"]</th>
                                     <td>@doc["city"]</td>
                                     <td>@doc["dateDevivery"]</td>
@@ -165,6 +166,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
+
                                     <p>@text</p>
                                     </div>
                                     <div class="modal-footer">
@@ -188,7 +190,6 @@
 
                             }
                         <p>@date.ToString("dddd dd MMMM yyyy")</p>
-                        <p>text</p>
 
                         
 
@@ -215,12 +216,14 @@
 
     List<BsonDocument> bsonDocuments = new List<BsonDocument>();
 
-    public string? order { get; set; }
+    string? order { get; set; }
 
     private MarkupString text { get; set; }
-    private async Task OrderModal()
+
+    private async Task OrderModal(BsonDocument doc, MouseEventArgs args)
     {
-        text = new MarkupString(await JSRuntime.InvokeAsync<string>("OrderModal"));
+        Console.WriteLine(doc);
+        text = new MarkupString(await JSRuntime.InvokeAsync<string>("OrderModal", doc["orderNum"].ToString()));
     }
 
     public string ConvertDate()
@@ -256,6 +259,11 @@
             mongo.GlobalFilter(bsonDocuments, date, adminModel.PhoneNumber, adminModel.OrderNumber, adminModel.Email, GetMeth, PayMet);
         }
 
+    }
+
+    public void ModalWorksAdmin()
+    {
+        order = mongo.ModalWorks(text).ToString();
     }
 
     

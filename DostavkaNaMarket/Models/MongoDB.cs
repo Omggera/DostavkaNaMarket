@@ -74,7 +74,7 @@ namespace DostavkaNaMarket.Models
             if (startDate == null) filterDate = Builders<BsonDocument>.Filter.Ne("dateDevivery", $"{startDate}");
             if (phone == null) filterPhone = Builders<BsonDocument>.Filter.Ne("clientPhone", $"{phone}");
             if (order == null) filterOrder = Builders<BsonDocument>.Filter.Ne("orderNum", $"{order}");
-            if (email == null) filterEmail = Builders<BsonDocument>.Filter.Ne("clientMail", $"{email}");
+            if ((email == null) & (email == "")) filterEmail = Builders<BsonDocument>.Filter.Ne("clientMail", $"{email}");
             if (getMethod == "Все") filterGetMethod = Builders<BsonDocument>.Filter.Ne("getMethod", $"{getMethod}");
             if (payMethod == "Все") filterPayMethod = Builders<BsonDocument>.Filter.Ne("paymentMethod", $"{payMethod}");
 
@@ -96,5 +96,13 @@ namespace DostavkaNaMarket.Models
 
         }
 
+        public BsonDocument ModalWorks(string order)
+        {
+            var filter = new BsonDocument("orderNum", $"{order}");
+            var user = Collection.Find(filter).FirstOrDefault();
+            var dictionary = user.ToDictionary();
+            //string? dataForPrev = dictionary[field].ToString();
+            //return dataForPrev;
+        }
     }
 }

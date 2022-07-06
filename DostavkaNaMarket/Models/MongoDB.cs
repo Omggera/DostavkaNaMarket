@@ -6,6 +6,7 @@ using System.Configuration;
 using System.IO;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Components;
 
 namespace DostavkaNaMarket.Models
 {
@@ -96,13 +97,13 @@ namespace DostavkaNaMarket.Models
 
         }
 
-        public BsonDocument ModalWorks(string order)
+        public string? ModalWorks(string? order, string field)
         {
             var filter = new BsonDocument("orderNum", $"{order}");
             var user = Collection.Find(filter).FirstOrDefault();
             var dictionary = user.ToDictionary();
-            //string? dataForPrev = dictionary[field].ToString();
-            //return dataForPrev;
+            string? dataValue = dictionary[field].ToString();
+            return dataValue;
         }
     }
 }

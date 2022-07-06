@@ -166,8 +166,22 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-
-                                    <p>@text</p>
+                                        @if(order != null)
+                                        {
+                                            <p>@mongo.ModalWorks(order, "clientPhone")</p>
+                                            <p>@orderNumAdm</p>
+                                            <p>@dateOrderAdm</p>
+                                            <p>@cityAdm</p>
+                                            <p>@dateDeviveryAdm</p>
+                                            <p>@clientNameAdm</p>
+                                            <p>@clientPhoneAdm</p>
+                                            <p>@clientMailAdm</p>
+                                            <p>@clientAdressAdm</p>
+                                            <p>@paymentMethodAdm</p>
+                                            <p>@finalAmountAdm</p>
+                                            <p>@barCodesAdm</p>
+                                        }
+                                    
                                     </div>
                                     <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -220,10 +234,26 @@
 
     private MarkupString text { get; set; }
 
+
+    string? orderNumAdm { get; set; }
+    string? dateOrderAdm { get; set; }
+    string? cityAdm { get; set; }
+    string? dateDeviveryAdm { get; set; }
+    string? clientNameAdm { get; set; }
+    string? clientPhoneAdm { get; set; }
+    string? clientMailAdm { get; set; }
+    string? getMethodAdm { get; set; }
+    string? clientAdressAdm { get; set; }
+    string? paymentMethodAdm { get; set; }
+    string? finalAmountAdm { get; set; }
+    string? barCodesAdm { get; set; }
+
+
     private async Task OrderModal(BsonDocument doc, MouseEventArgs args)
     {
-        Console.WriteLine(doc);
+        //Console.WriteLine(doc);
         text = new MarkupString(await JSRuntime.InvokeAsync<string>("OrderModal", doc["orderNum"].ToString()));
+        order = text.ToString();
     }
 
     public string ConvertDate()
@@ -263,7 +293,18 @@
 
     public void ModalWorksAdmin()
     {
-        order = mongo.ModalWorks(text).ToString();
+        orderNumAdm = mongo.ModalWorks(order, "orderNum");
+        dateOrderAdm = mongo.ModalWorks(order, "dateOrder");
+        cityAdm = mongo.ModalWorks(order, "city");
+        dateDeviveryAdm = mongo.ModalWorks(order, "dateDevivery");
+        clientNameAdm = mongo.ModalWorks(order, "clientName");
+        clientPhoneAdm = mongo.ModalWorks(order, "clientPhone");
+        clientMailAdm = mongo.ModalWorks(order, "clientMail");
+        getMethodAdm = mongo.ModalWorks(order, "getMethod");
+        clientAdressAdm = mongo.ModalWorks(order, "clientAdress"); 
+        paymentMethodAdm = mongo.ModalWorks(order, "paymentMethod"); 
+        finalAmountAdm = mongo.ModalWorks(order, "finalAmount");
+        barCodesAdm = mongo.ModalWorks(order, "barCodes");
     }
 
     

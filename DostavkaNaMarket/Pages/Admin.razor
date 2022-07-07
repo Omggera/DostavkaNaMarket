@@ -168,18 +168,24 @@
                                     <div class="modal-body">
                                         @if(order != null)
                                         {
-                                            <p>@mongo.ModalWorks(order, "clientPhone")</p>
+                                            ModalWorksAdmin();
+                                            //<p>@mongo.ModalWorks(order, "barcodes")</p>
                                             <p>@orderNumAdm</p>
                                             <p>@dateOrderAdm</p>
                                             <p>@cityAdm</p>
                                             <p>@dateDeviveryAdm</p>
                                             <p>@clientNameAdm</p>
+                                            <label class="form-label">Телефон</label>
+                                            <input class="form-control" id="phone"  @bind="clientPhoneAdm"/>
                                             <p>@clientPhoneAdm</p>
                                             <p>@clientMailAdm</p>
                                             <p>@clientAdressAdm</p>
                                             <p>@paymentMethodAdm</p>
                                             <p>@finalAmountAdm</p>
-                                            <p>@barCodesAdm</p>
+                                            @foreach(var i in barCodesAdm)
+                                            {
+                                                <p>@i</p>
+                                            }
                                         }
                                     
                                     </div>
@@ -246,7 +252,8 @@
     string? clientAdressAdm { get; set; }
     string? paymentMethodAdm { get; set; }
     string? finalAmountAdm { get; set; }
-    string? barCodesAdm { get; set; }
+
+    List<BsonValue> barCodesAdm = new List<BsonValue>();
 
 
     private async Task OrderModal(BsonDocument doc, MouseEventArgs args)
@@ -293,21 +300,21 @@
 
     public void ModalWorksAdmin()
     {
-        orderNumAdm = mongo.ModalWorks(order, "orderNum");
-        dateOrderAdm = mongo.ModalWorks(order, "dateOrder");
-        cityAdm = mongo.ModalWorks(order, "city");
-        dateDeviveryAdm = mongo.ModalWorks(order, "dateDevivery");
-        clientNameAdm = mongo.ModalWorks(order, "clientName");
-        clientPhoneAdm = mongo.ModalWorks(order, "clientPhone");
-        clientMailAdm = mongo.ModalWorks(order, "clientMail");
-        getMethodAdm = mongo.ModalWorks(order, "getMethod");
-        clientAdressAdm = mongo.ModalWorks(order, "clientAdress"); 
-        paymentMethodAdm = mongo.ModalWorks(order, "paymentMethod"); 
-        finalAmountAdm = mongo.ModalWorks(order, "finalAmount");
-        barCodesAdm = mongo.ModalWorks(order, "barCodes");
+        orderNumAdm = mongo.ModalWorks(order, "orderNum", barCodesAdm);
+        dateOrderAdm = mongo.ModalWorks(order, "dateOrder", barCodesAdm);
+        cityAdm = mongo.ModalWorks(order, "city", barCodesAdm);
+        dateDeviveryAdm = mongo.ModalWorks(order, "dateDevivery", barCodesAdm);
+        clientNameAdm = mongo.ModalWorks(order, "clientName", barCodesAdm);
+        clientPhoneAdm = mongo.ModalWorks(order, "clientPhone", barCodesAdm);
+        clientMailAdm = mongo.ModalWorks(order, "clientMail", barCodesAdm);
+        getMethodAdm = mongo.ModalWorks(order, "getMethod", barCodesAdm);
+        clientAdressAdm = mongo.ModalWorks(order, "clientAdress", barCodesAdm); 
+        paymentMethodAdm = mongo.ModalWorks(order, "paymentMethod", barCodesAdm); 
+        finalAmountAdm = mongo.ModalWorks(order, "finalAmount", barCodesAdm);
+        mongo.ModalWorks(order, "barcodes", barCodesAdm);
     }
 
-    
+
 
     private async Task Logout()
     {

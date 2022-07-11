@@ -159,39 +159,120 @@
                                 </tr>
                             }
                             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
+                                <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">Заказ №@orderNumAdm от @dateOrderAdm г.@cityAdm</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        @if(order != null)
-                                        {
-                                            ModalWorksAdmin();
-                                            //<p>@mongo.ModalWorks(order, "barcodes")</p>
-                                            <p>@orderNumAdm</p>
-                                            <p>@dateOrderAdm</p>
-                                            <p>@cityAdm</p>
-                                            <p>@dateDeviveryAdm</p>
-                                            <p>@clientNameAdm</p>
-                                            <label class="form-label">Телефон</label>
-                                            <input class="form-control" id="phone"  @bind="clientPhoneAdm"/>
-                                            <p>@clientPhoneAdm</p>
-                                            <p>@clientMailAdm</p>
-                                            <p>@clientAdressAdm</p>
-                                            <p>@paymentMethodAdm</p>
-                                            <p>@finalAmountAdm</p>
+                                        <div class="row g-3 align-items-center">
+                                          <div class="col-3 col-sm-3">
+                                            <label for="numorder" class="col-form-label">Номер заказа</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="numorder"  @bind="orderNumAdm" @bind:event="oninput" disabled/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="cityAdm" class="col-form-label">Город</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="cityAdm"  @bind="cityAdm" @bind:event="oninput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="clientNameAdm" class="col-form-label">Имя</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="clientNameAdm"  @bind="clientNameAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="dateOrderAdm" class="col-form-label">Дата и время заказа</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="dateOrderAdm"  @bind="dateOrderAdm" @bind:event="oninput" disabled/>
+                                          </div>
+
+                                           <div class="col-3 col-sm-3">
+                                            <label for="clientPhoneAdm" class="col-form-label">Телефон</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="clientPhoneAdm"  @bind="clientPhoneAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="clientMailAdm" class="col-form-label">Почта</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="clientMailAdm"  @bind="clientMailAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="dateDeviveryAdm" class="col-form-label">Дата отправки</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="dateDeviveryAdm"  @bind="dateDeviveryAdm" @bind:event="oninput" disabled/>
+                                          </div>
+
+                                          <div class="col-6 col-sm-3"></div>
+                                          <div class="col-6 col-sm-3"></div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="getMethodAdm" class="col-form-label">Способ получения</label>
+                                          </div>
+                                          <div class="col-5 col-sm-5">
+                                              <InputSelect class="form-select" @bind-Value="getMethodAdm" disabled="@disabledInput">
+                                                <option value="Привезет самостоятельно">Привезет самостоятельно</option>
+                                                <option value="Нужен вывоз">Нужен вывоз</option>
+                                              </InputSelect>
+                                          </div>
+
+                                          <div class="col-6 col-sm-3"></div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="clientAdressAdm" class="col-form-label">Адрес</label>
+                                          </div>
+                                          <div class="col-9 col-sm-9">
+                                            <input class="form-control" id="clientAdressAdm"  @bind="clientAdressAdm" @bind:event="oninput" 
+                                                          disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="paymentMethodAdm" class="col-form-label">Способ оплаты</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                              <InputSelect class="form-select" @bind-Value="paymentMethodAdm" disabled="@disabledInput">
+                                                <option value="Наличные">Наличные</option>
+                                                <option value="Карта">Карта</option>
+                                              </InputSelect>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="finalAmountAdm" class="col-form-label">Общая сумма</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="finalAmountAdm"  @bind="finalAmountAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                        </div>
+                                        <p>@getMethodAdm</p>
                                             @foreach(var i in barCodesAdm)
                                             {
                                                 <p>@i</p>
                                             }
-                                        }
-                                    
                                     </div>
                                     <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                        <div class="col align-self-start">
+                                            <button type="button" class="btn btn-primary" @onclick="ActionDisabled">Редактировать</button>
+                                        </div>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                        <button type="button" class="btn btn-success">Сохранить</button>
                                     </div>
                                 </div>
                                 </div>
@@ -210,7 +291,7 @@
 
                             }
                         <p>@date.ToString("dddd dd MMMM yyyy")</p>
-
+                        <p>@getMethodAdm</p>
                         
 
                       <hr class="my-4">
@@ -255,12 +336,26 @@
 
     List<BsonValue> barCodesAdm = new List<BsonValue>();
 
+    bool disabledInput { get; set; } = true;
+
+    public void ActionDisabled()
+    {
+        if (!disabledInput)
+        {
+            disabledInput = true;
+        }
+        else
+        {
+            disabledInput = false;
+        }
+    }
 
     private async Task OrderModal(BsonDocument doc, MouseEventArgs args)
     {
         //Console.WriteLine(doc);
         text = new MarkupString(await JSRuntime.InvokeAsync<string>("OrderModal", doc["orderNum"].ToString()));
         order = text.ToString();
+        ModalWorksAdmin();
     }
 
     public string ConvertDate()
@@ -301,7 +396,7 @@
     public void ModalWorksAdmin()
     {
         orderNumAdm = mongo.ModalWorks(order, "orderNum", barCodesAdm);
-        dateOrderAdm = mongo.ModalWorks(order, "dateOrder", barCodesAdm);
+        dateOrderAdm = mongo.ModalWorks(order, "dateOrder", barCodesAdm).Substring(0, 10);
         cityAdm = mongo.ModalWorks(order, "city", barCodesAdm);
         dateDeviveryAdm = mongo.ModalWorks(order, "dateDevivery", barCodesAdm);
         clientNameAdm = mongo.ModalWorks(order, "clientName", barCodesAdm);

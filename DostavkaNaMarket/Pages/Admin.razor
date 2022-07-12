@@ -178,7 +178,12 @@
                                             <label for="cityAdm" class="col-form-label">Город</label>
                                           </div>
                                           <div class="col-6 col-sm-3">
-                                            <input class="form-control" id="cityAdm"  @bind="cityAdm" @bind:event="oninput"/>
+                                              <InputSelect class="form-select" @bind-Value="cityAdm" disabled="@disabledInput">
+                                                <option value="Владимир">Владимир</option>
+                                                <option value="Иваново">Иваново</option>
+                                                <option value="Муром">Муром</option>
+                                                <option value="Ковров">Ковров</option>
+                                              </InputSelect>
                                           </div>
 
                                           <div class="col-3 col-sm-3">
@@ -256,16 +261,34 @@
                                             <label for="finalAmountAdm" class="col-form-label">Общая сумма</label>
                                           </div>
                                           <div class="col-6 col-sm-3">
-                                            <input class="form-control" id="finalAmountAdm"  @bind="finalAmountAdm" @bind:event="oninput" 
-                                                            disabled="@disabledInput"/>
+                                            <input class="form-control" id="finalAmountAdm"  @bind="finalAmountAdm" @bind:event="oninput" disabled/>
                                           </div>
 
+                                          <div class="col-3 col-sm-3">
+                                              <label for="Delivery" class="form-label">Введите ШК</label>
+                                          </div>
+                                          <div class="col-9 col-sm-9">
+                                              <div class="input-group mb-3">
+                                                  <span class="input-group-text">WB</span>
+                                                  <input type="number" class="form-control" name="barcodeAdm" placeholder="8027 4257" aria-describedby="button-addonAdm"
+                                                          @bind="barcode" @bind:event="oninput" @onkeydown="Enter" disabled="@disabledInput"/>
+                                                  <button class="btn btn-outline-primary" type="button" id="button-addonAdm" 
+                                                          @onclick="AddToList" disabled="@disabledInput">Добавить</button>
+                                              </div>
+                                          </div>
+
+                                          @foreach(var bar in barCodesAdm)
+                                          {
+                                              <div class="col-6 col-sm-6">
+                                                  <div class="input-group mb-3">
+                                                      <span class="input-group-text col-9" id="basic-addon3">@bar</span>
+                                                      <button type="button" class="btn btn-outline-danger" 
+                                                              @onclick="() => RemoveBarcode(bar)" disabled="@disabledInput">Удалить</button>
+                                                  </div>
+                                              </div>
+                                          }
                                         </div>
-                                        <p>@getMethodAdm</p>
-                                            @foreach(var i in barCodesAdm)
-                                            {
-                                                <p>@i</p>
-                                            }
+
                                     </div>
                                     <div class="modal-footer">
                                         <div class="col align-self-start">
@@ -281,6 +304,8 @@
                         </table>
                       <hr class="my-4">
                       <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
+
+
                       <p>@adminModel.PhoneNumber</p>
                         <p>@adminModel.Email</p>
                         <p>@adminModel.OrderNumber</p>
@@ -314,6 +339,7 @@
 @code {
     MongoDB mongo = new MongoDB();
     AdminModel adminModel = new AdminModel();
+    User user = new User();
 
     List<BsonDocument> bsonDocuments = new List<BsonDocument>();
 
@@ -334,7 +360,8 @@
     string? paymentMethodAdm { get; set; }
     string? finalAmountAdm { get; set; }
 
-    List<BsonValue> barCodesAdm = new List<BsonValue>();
+    List<string> barCodesAdm = new List<string>();
+    string? barcode { get; set; }
 
     bool disabledInput { get; set; } = true;
 
@@ -409,7 +436,28 @@
         mongo.ModalWorks(order, "barcodes", barCodesAdm);
     }
 
+    public void AddToList()
+    {
+        if (barcode != null)
+        {
+            barCodesAdm.Add(barcode);
+            barcode = null;
+        }
+        else barcode = null;
+    }
 
+    public void RemoveBarcode(string bar)
+    {
+        barCodesAdm.Remove(bar);
+    }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            AddToList();
+        }
+    }
 
     private async Task Logout()
     {

@@ -97,18 +97,28 @@ namespace DostavkaNaMarket.Models
 
         }
 
-        public string? ModalWorks(string? order, string field, List<BsonValue> list)
+        public string? ModalWorks(string? order, string field, List<string> list)
         {
             var filter = new BsonDocument("orderNum", $"{order}");
             var user = Collection.Find(filter).FirstOrDefault();
+
             var dictionary = user.ToDictionary();
+
             var elem = user.GetElement(12);
             BsonValue array = elem.Value;
+
+            
+            var arrayOfStrings = user["barcodes"].AsBsonArray.Select(p => p.AsString).ToArray();
+
             string? dataValue;
             if(field == "barcodes")
             {
                 list.Clear();
-                list.Add(array);
+                foreach (var i in arrayOfStrings)
+                {
+                    //list.Clear();
+                    list.Add(i);
+                }
                 return null;
             }
             else

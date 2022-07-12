@@ -239,13 +239,16 @@
 
                                           <div class="col-6 col-sm-3"></div>
 
-                                          <div class="col-3 col-sm-3">
-                                            <label for="clientAdressAdm" class="col-form-label">Адрес</label>
-                                          </div>
-                                          <div class="col-9 col-sm-9">
-                                            <input class="form-control" id="clientAdressAdm"  @bind="clientAdressAdm" @bind:event="oninput" 
-                                                          disabled="@disabledInput"/>
-                                          </div>
+                                          @if(getMethodAdm == "Нужен вывоз")
+                                          {
+                                              <div class="col-3 col-sm-3">
+                                                <label for="clientAdressAdm" class="col-form-label">Адрес</label>
+                                              </div>
+                                              <div class="col-9 col-sm-9">
+                                                <input class="form-control" id="clientAdressAdm"  @bind="clientAdressAdm" @bind:event="oninput" 
+                                                              disabled="@disabledInput"/>
+                                              </div>
+                                          }
 
                                           <div class="col-3 col-sm-3">
                                             <label for="paymentMethodAdm" class="col-form-label">Способ оплаты</label>
@@ -257,6 +260,7 @@
                                               </InputSelect>
                                           </div>
 
+                                          @{CalculateFinalAmount();}
                                           <div class="col-3 col-sm-3">
                                             <label for="finalAmountAdm" class="col-form-label">Общая сумма</label>
                                           </div>
@@ -295,11 +299,36 @@
                                             <button type="button" class="btn btn-primary" @onclick="ActionDisabled">Редактировать</button>
                                         </div>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                        <button type="button" class="btn btn-success">Сохранить</button>
+                                        <button type="button" class="btn btn-success" @onclick="UpdateDocument" data-bs-target="#exampleModalToggle2" 
+                                                data-bs-toggle="modal" data-bs-dismiss="modal" disabled="@disabledInput">Сохранить</button>
                                     </div>
                                 </div>
                                 </div>
                             </div>
+                            <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+                              <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalToggleLabel2"></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <div class="text-center">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                          </svg>
+                                          <h4>Изменения сохранены</h4>
+                                      </div>
+                                    
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
                           </tbody>
                         </table>
                       <hr class="my-4">
@@ -358,7 +387,7 @@
     string? getMethodAdm { get; set; }
     string? clientAdressAdm { get; set; }
     string? paymentMethodAdm { get; set; }
-    string? finalAmountAdm { get; set; }
+    int? finalAmountAdm { get; set; }
 
     List<string> barCodesAdm = new List<string>();
     string? barcode { get; set; }
@@ -432,7 +461,7 @@
         getMethodAdm = mongo.ModalWorks(order, "getMethod", barCodesAdm);
         clientAdressAdm = mongo.ModalWorks(order, "clientAdress", barCodesAdm); 
         paymentMethodAdm = mongo.ModalWorks(order, "paymentMethod", barCodesAdm); 
-        finalAmountAdm = mongo.ModalWorks(order, "finalAmount", barCodesAdm);
+        finalAmountAdm = Convert.ToInt32(mongo.ModalWorks(order, "finalAmount", barCodesAdm));
         mongo.ModalWorks(order, "barcodes", barCodesAdm);
     }
 
@@ -458,6 +487,40 @@
             AddToList();
         }
     }
+
+    public void CalculateFinalAmount()
+    {
+        user.BoxAmount = barCodesAdm.Count * user.BoxPrice;
+
+        if ((clientAdressAdm == null) | (getMethodAdm == "Привезет самостоятельно") | (clientAdressAdm == ""))
+        {
+            user.DeliveryPrice = 0;
+            clientAdressAdm = null;
+        }
+        else user.DeliveryPrice = 400;
+
+        if ((user.DeliveryPrice == null) | (user.DeliveryPrice == 0))
+        {
+            if (user.BoxAmount == 0)
+            {
+                finalAmountAdm = 0;
+            }
+            else finalAmountAdm = user.BoxAmount + user.DeliveryPrice;
+        }
+        else finalAmountAdm = user.BoxAmount + user.DeliveryPrice;
+
+        if(paymentMethodAdm == "Карта")
+        {
+            finalAmountAdm += (((user.BoxAmount + user.DeliveryPrice) * 2) / 100);
+        }
+    }
+
+    public void UpdateDocument()
+    {
+        mongo.UpdateDocument(order, cityAdm, clientNameAdm, clientPhoneAdm, clientMailAdm, getMethodAdm, 
+                                   clientAdressAdm, paymentMethodAdm, finalAmountAdm, barCodesAdm);
+    }
+
 
     private async Task Logout()
     {

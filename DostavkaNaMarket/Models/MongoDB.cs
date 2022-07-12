@@ -103,10 +103,6 @@ namespace DostavkaNaMarket.Models
             var user = Collection.Find(filter).FirstOrDefault();
 
             var dictionary = user.ToDictionary();
-
-            var elem = user.GetElement(12);
-            BsonValue array = elem.Value;
-
             
             var arrayOfStrings = user["barcodes"].AsBsonArray.Select(p => p.AsString).ToArray();
 
@@ -116,7 +112,6 @@ namespace DostavkaNaMarket.Models
                 list.Clear();
                 foreach (var i in arrayOfStrings)
                 {
-                    //list.Clear();
                     list.Add(i);
                 }
                 return null;
@@ -126,6 +121,26 @@ namespace DostavkaNaMarket.Models
                 dataValue = dictionary[field].ToString();
             }
             return dataValue;
+        }
+
+        public void UpdateDocument(string? order, string? city, string? name, string? phone, string? mail, string? getMethod, 
+                                   string? adress, string? payMethod, int? amount, List<string> barcodes)
+        {
+            Collection.UpdateOneAsync(
+                new BsonDocument("orderNum", $"{order}"),
+                new BsonDocument("$set", new BsonDocument 
+                {
+                    {"city",$"{city}"},
+                    {"clientName",$"{name}"},
+                    {"clientPhone",$"{phone}"},
+                    {"clientMail",$"{mail}"},
+                    {"getMethod",$"{getMethod}"},
+                    {"clientAdress",$"{adress}"},
+                    {"paymentMethod",$"{payMethod}"},
+                    {"finalAmount",$"{amount}"},
+                    {"barcodes", new BsonArray(barcodes)}
+                }
+                ));
         }
     }
 }

@@ -5,6 +5,9 @@
 @using BlazorDateRangePicker
 @using MongoDB.Bson
 @using MongoDB.Driver
+@using OfficeOpenXml
+@using Microsoft.JSInterop
+
 
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
@@ -274,7 +277,8 @@
                                           <div class="col-9 col-sm-9">
                                               <div class="input-group mb-3">
                                                   <span class="input-group-text">WB</span>
-                                                  <input type="number" class="form-control" name="barcodeAdm" placeholder="8027 4257" aria-describedby="button-addonAdm"
+                                                  <input type="number" class="form-control" name="barcodeAdm" placeholder="8027 4257" 
+                                                          aria-describedby="button-addonAdm"
                                                           @bind="barcode" @bind:event="oninput" @onkeydown="Enter" disabled="@disabledInput"/>
                                                   <button class="btn btn-outline-primary" type="button" id="button-addonAdm" 
                                                           @onclick="AddToList" disabled="@disabledInput">Добавить</button>
@@ -297,6 +301,7 @@
                                     <div class="modal-footer">
                                         <div class="col align-self-start">
                                             <button type="button" class="btn btn-primary" @onclick="ActionDisabled">Редактировать</button>
+                                            <button type="button" class="btn btn-warning" @onclick="Excel">Печать</button>
                                         </div>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                                         <button type="button" class="btn btn-success" @onclick="UpdateDocument" data-bs-target="#exampleModalToggle2" 
@@ -369,6 +374,10 @@
     MongoDB mongo = new MongoDB();
     AdminModel adminModel = new AdminModel();
     User user = new User();
+    ExcelCreate excel = new ExcelCreate();
+
+    DateTimeOffset? StartDate { get; set; } = DateTime.Today;
+    DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
 
     List<BsonDocument> bsonDocuments = new List<BsonDocument>();
 
@@ -529,7 +538,34 @@
         navManager.NavigateTo("/login", true);
     }
 
-    DateTimeOffset? StartDate { get; set; } = DateTime.Today;
-    DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
+    public async Task Excel()
+    {
+        FileInfo file = new FileInfo(@"D:\Base.xlsx");
+        byte[] fileContents;
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using (ExcelPackage excelPackage = new ExcelPackage(file))
+        {
+            //Get a WorkSheet by index. Note that EPPlus indexes are base 1, not base 0!
+            ExcelWorksheet ws = excelPackage.Workbook.Worksheets["Sheet"];
+
+            //Get the content from cells A1 and B1 as string, in two different notations
+            ws.Cells["B26"].Value = "10";
+
+            //Save your file
+            excelPackage.SaveAs(new FileInfo(@"D:\myworkbook.xlsx"));
+
+            fileContents = excelPackage.GetAsByteArray();
+
+            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "BlazorFile.xlsx", Convert.ToBase64String(fileContents));
+            //await JSRuntime.InvokeVoidAsync(
+            //    "blazorDownloadFile", 
+            //    "BlazorSample1.xlsx", 
+            //    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            //    excelPackage.GetAsByteArray());
+
+        }
+        
+    }
+    
     
 }

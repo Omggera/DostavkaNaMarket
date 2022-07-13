@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorDateRangePicker" Version="4.2.0" />
+    <PackageReference Include="EPPlus" Version="6.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.6" />
     <PackageReference Include="MongoDB.Driver" Version="2.16.0" />
   </ItemGroup>

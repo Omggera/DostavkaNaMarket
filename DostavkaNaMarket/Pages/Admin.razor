@@ -1,0 +1,535 @@
+﻿@page "/admin"
+@attribute [Authorize(Roles ="Administrator")]
+
+@using DostavkaNaMarket.Authentication
+@using BlazorDateRangePicker
+@using MongoDB.Bson
+@using MongoDB.Driver
+
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
+@inject IJSRuntime JSRuntime
+
+@inject ILoggerFactory LoggerF
+
+<AuthorizeView>
+    <Authorized>
+        <body>
+            <EditForm Model="adminModel" Context="another_name" OnSubmit="RestartSearch">
+              <main>
+                <div class="row g-5"> 
+                  <div class="col">
+                    <h4 class="mb-3 text-center">Управление</h4>
+                      <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="date" class="form-label">Дата отправки</label>
+                            @if(adminModel.isChecked)
+                            {
+                                <DateRangePicker class="form-control" AutoApply="true" SingleDatePicker="true" 
+                                @bind-StartDate="StartDate" @bind-EndDate="EndDate" disabled/>
+                                StartDate = null;
+                                EndDate = null;
+                            }
+                            else if(!adminModel.isChecked)
+                            {
+                                <DateRangePicker class="form-control" AutoApply="true" SingleDatePicker="true" 
+                                @bind-StartDate="StartDate" @bind-EndDate="EndDate" />
+                            }
+                            
+                        </div>
+                        <div class="col-1">
+                            <label for="date" class="form-label">Все даты</label>
+                            <div class="boxed-check-group boxed-check-outline-primary">
+                                <label class="boxed-check small">
+                                  <InputCheckbox class="boxed-check-input" type="checkbox" @bind-Value="adminModel.isChecked"/>
+                                  <div class="boxed-check-label text-center">Все</div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-4">
+                            <label class="form-label">Телефон</label>
+                            <InputText class="form-control" id="phoneNumber" @bind-Value="adminModel.PhoneNumber"/>
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label">Адрес электронной почты</label>
+                            <InputText  class="form-control" id="email" @bind-Value="adminModel.Email"/>
+                        </div>
+                        <div class="col-5">
+                            
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="orderNum" class="form-label">Заказ №</label>
+                            <InputText class="form-control" id="orderNum" @bind-Value="adminModel.OrderNumber"/>
+                        </div>
+                        <div class="col-3">
+                            <label for="check" class="form-label">Способ оплаты</label>
+                            <InputRadioGroup Name="radio-overview-1" @bind-Value="adminModel.PayMet">
+                            <div class="boxed-check-group boxed-check-outline-primary">
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-1" Value="@AdminModel.PaymentMethod.All"/>
+                                    <div class="boxed-check-label">Все</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-1" Value="@AdminModel.PaymentMethod.Cash"/>
+                                    <div class="boxed-check-label">Наличные</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-1" Value="@AdminModel.PaymentMethod.Card"/>
+                                    <div class="boxed-check-label">Карта</div>
+                                </label>
+                            </div>
+                            </InputRadioGroup>
+                        </div>
+                        <div class="col-4">
+                            <label for="check" class="form-label">Способ получения</label>
+                            <InputRadioGroup Name="radio-overview-2" @bind-Value="adminModel.GetMeth">
+                            <div class="boxed-check-group boxed-check-outline-primary">
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@AdminModel.GetMethod.All"/>
+                                    <div class="boxed-check-label">Все</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@AdminModel.GetMethod.Sam"/>
+                                    <div class="boxed-check-label">Сам привез</div>
+                                </label>
+                                <label class="boxed-check boxed-check-inline small">
+                                    <InputRadio class="boxed-check-input" type="radio" name="radio-overview-2" Value="@AdminModel.GetMethod.Vivoz"/>
+                                    <div class="boxed-check-label">Вывоз</div>
+                                </label>
+                            </div>
+                            </InputRadioGroup>
+                        </div>
+                        <div class="col-1">
+                            
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-1">
+                            <button class="w-100 btn btn-primary" type="submit" value="">Найти</button>
+                        </div>
+                        <div class="col"></div>
+                        <div class="col"></div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-4"></div>
+                        <div class="col-3"></div>
+                        <div class="col-5"> </div>
+                      </div>
+                      <hr class="my-4">
+                        <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col">Заказ №</th>
+                              <th scope="col">Город</th>
+                              <th scope="col">Дата поставки</th>
+                              <th scope="col">Имя</th>
+                              <th scope="col">Телефон</th>
+                              <th scope="col">Почта</th>
+                              <th scope="col">Получение</th>
+                              <th scope="col">Адрес</th>
+                              <th scope="col">Оплата</th>
+                              <th scope="col">Сумма</th>
+                              <th scope="col">ШК</th>
+
+                            </tr>
+                          </thead>
+                          <tbody> 
+                            @foreach(var doc in bsonDocuments)
+                            {   
+                                <tr class="myclass" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="args => OrderModal(doc, args)" id="@doc["orderNum"]">
+                                    <th scope="row" >@doc["orderNum"]</th>
+                                    <td>@doc["city"]</td>
+                                    <td>@doc["dateDevivery"]</td>
+                                    <td>@doc["clientName"]</td>
+                                    <td>@doc["clientPhone"]</td>
+                                    <td>@doc["clientMail"]</td>
+                                    <td>@doc["getMethod"]</td>
+                                    <td>@doc["clientAdress"]</td>
+                                    <td>@doc["paymentMethod"]</td>
+                                    <td>@doc["finalAmount"] руб</td>
+                                    <td>@doc["barcodes"]</td>
+                                </tr>
+                            }
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Заказ №@orderNumAdm от @dateOrderAdm г.@cityAdm</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row g-3 align-items-center">
+                                          <div class="col-3 col-sm-3">
+                                            <label for="numorder" class="col-form-label">Номер заказа</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="numorder"  @bind="orderNumAdm" @bind:event="oninput" disabled/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="cityAdm" class="col-form-label">Город</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                              <InputSelect class="form-select" @bind-Value="cityAdm" disabled="@disabledInput">
+                                                <option value="Владимир">Владимир</option>
+                                                <option value="Иваново">Иваново</option>
+                                                <option value="Муром">Муром</option>
+                                                <option value="Ковров">Ковров</option>
+                                              </InputSelect>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="clientNameAdm" class="col-form-label">Имя</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="clientNameAdm"  @bind="clientNameAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="dateOrderAdm" class="col-form-label">Дата и время заказа</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="dateOrderAdm"  @bind="dateOrderAdm" @bind:event="oninput" disabled/>
+                                          </div>
+
+                                           <div class="col-3 col-sm-3">
+                                            <label for="clientPhoneAdm" class="col-form-label">Телефон</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="clientPhoneAdm"  @bind="clientPhoneAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="clientMailAdm" class="col-form-label">Почта</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="clientMailAdm"  @bind="clientMailAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="dateDeviveryAdm" class="col-form-label">Дата отправки</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="dateDeviveryAdm"  @bind="dateDeviveryAdm" @bind:event="oninput" disabled/>
+                                          </div>
+
+                                          <div class="col-6 col-sm-3"></div>
+                                          <div class="col-6 col-sm-3"></div>
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="getMethodAdm" class="col-form-label">Способ получения</label>
+                                          </div>
+                                          <div class="col-5 col-sm-5">
+                                              <InputSelect class="form-select" @bind-Value="getMethodAdm" disabled="@disabledInput">
+                                                <option value="Привезет самостоятельно">Привезет самостоятельно</option>
+                                                <option value="Нужен вывоз">Нужен вывоз</option>
+                                              </InputSelect>
+                                          </div>
+
+                                          <div class="col-6 col-sm-3"></div>
+
+                                          @if(getMethodAdm == "Нужен вывоз")
+                                          {
+                                              <div class="col-3 col-sm-3">
+                                                <label for="clientAdressAdm" class="col-form-label">Адрес</label>
+                                              </div>
+                                              <div class="col-9 col-sm-9">
+                                                <input class="form-control" id="clientAdressAdm"  @bind="clientAdressAdm" @bind:event="oninput" 
+                                                              disabled="@disabledInput"/>
+                                              </div>
+                                          }
+
+                                          <div class="col-3 col-sm-3">
+                                            <label for="paymentMethodAdm" class="col-form-label">Способ оплаты</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                              <InputSelect class="form-select" @bind-Value="paymentMethodAdm" disabled="@disabledInput">
+                                                <option value="Наличные">Наличные</option>
+                                                <option value="Карта">Карта</option>
+                                              </InputSelect>
+                                          </div>
+
+                                          @{CalculateFinalAmount();}
+                                          <div class="col-3 col-sm-3">
+                                            <label for="finalAmountAdm" class="col-form-label">Общая сумма</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="finalAmountAdm"  @bind="finalAmountAdm" @bind:event="oninput" disabled/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
+                                              <label for="Delivery" class="form-label">Введите ШК</label>
+                                          </div>
+                                          <div class="col-9 col-sm-9">
+                                              <div class="input-group mb-3">
+                                                  <span class="input-group-text">WB</span>
+                                                  <input type="number" class="form-control" name="barcodeAdm" placeholder="8027 4257" aria-describedby="button-addonAdm"
+                                                          @bind="barcode" @bind:event="oninput" @onkeydown="Enter" disabled="@disabledInput"/>
+                                                  <button class="btn btn-outline-primary" type="button" id="button-addonAdm" 
+                                                          @onclick="AddToList" disabled="@disabledInput">Добавить</button>
+                                              </div>
+                                          </div>
+
+                                          @foreach(var bar in barCodesAdm)
+                                          {
+                                              <div class="col-6 col-sm-6">
+                                                  <div class="input-group mb-3">
+                                                      <span class="input-group-text col-9" id="basic-addon3">@bar</span>
+                                                      <button type="button" class="btn btn-outline-danger" 
+                                                              @onclick="() => RemoveBarcode(bar)" disabled="@disabledInput">Удалить</button>
+                                                  </div>
+                                              </div>
+                                          }
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="col align-self-start">
+                                            <button type="button" class="btn btn-primary" @onclick="ActionDisabled">Редактировать</button>
+                                        </div>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                        <button type="button" class="btn btn-success" @onclick="UpdateDocument" data-bs-target="#exampleModalToggle2" 
+                                                data-bs-toggle="modal" data-bs-dismiss="modal" disabled="@disabledInput">Сохранить</button>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+                              <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalToggleLabel2"></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <div class="text-center">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                          </svg>
+                                          <h4>Изменения сохранены</h4>
+                                      </div>
+                                    
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                          </tbody>
+                        </table>
+                      <hr class="my-4">
+                      <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
+
+
+                      <p>@adminModel.PhoneNumber</p>
+                        <p>@adminModel.Email</p>
+                        <p>@adminModel.OrderNumber</p>
+                        <p>@adminModel.PayMet</p>
+                        <p>@adminModel.GetMeth</p>
+                            @{
+                                DateTimeOffset date = StartDate ?? DateTime.Now;
+
+                            }
+                        <p>@date.ToString("dddd dd MMMM yyyy")</p>
+                        <p>@getMethodAdm</p>
+                        
+
+                      <hr class="my-4">
+                  </div>
+                </div>
+              </main>
+
+              <footer class="my-5 pt-5 text-muted text-center text-small">
+                <p class="mb-1">© 2021–2022 Доставка на маркет</p>
+              </footer>
+              </EditForm>
+            </body>
+        
+    </Authorized>
+    <NotAuthorized>
+        Your are not authorized
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    MongoDB mongo = new MongoDB();
+    AdminModel adminModel = new AdminModel();
+    User user = new User();
+
+    List<BsonDocument> bsonDocuments = new List<BsonDocument>();
+
+    string? order { get; set; }
+
+    private MarkupString text { get; set; }
+
+
+    string? orderNumAdm { get; set; }
+    string? dateOrderAdm { get; set; }
+    string? cityAdm { get; set; }
+    string? dateDeviveryAdm { get; set; }
+    string? clientNameAdm { get; set; }
+    string? clientPhoneAdm { get; set; }
+    string? clientMailAdm { get; set; }
+    string? getMethodAdm { get; set; }
+    string? clientAdressAdm { get; set; }
+    string? paymentMethodAdm { get; set; }
+    int? finalAmountAdm { get; set; }
+
+    List<string> barCodesAdm = new List<string>();
+    string? barcode { get; set; }
+
+    bool disabledInput { get; set; } = true;
+
+    public void ActionDisabled()
+    {
+        if (!disabledInput)
+        {
+            disabledInput = true;
+        }
+        else
+        {
+            disabledInput = false;
+        }
+    }
+
+    private async Task OrderModal(BsonDocument doc, MouseEventArgs args)
+    {
+        //Console.WriteLine(doc);
+        text = new MarkupString(await JSRuntime.InvokeAsync<string>("OrderModal", doc["orderNum"].ToString()));
+        order = text.ToString();
+        ModalWorksAdmin();
+    }
+
+    public string ConvertDate()
+    {
+        DateTimeOffset date = StartDate ?? DateTime.Now;
+        return date.ToString("ddd dd MMMM yy");
+    }
+
+    public void RestartSearch()
+    {
+        string? GetMeth = "Все";
+        string? PayMet = "Все";
+
+        if (adminModel.GetMeth == AdminModel.GetMethod.All) GetMeth = "Все";
+        else if (adminModel.GetMeth == AdminModel.GetMethod.Sam) GetMeth = "Привезет самостоятельно";
+        else if (adminModel.GetMeth == AdminModel.GetMethod.Vivoz) GetMeth = "Нужен вывоз";
+
+        if (adminModel.PayMet == AdminModel.PaymentMethod.All) PayMet = "Все";
+        else if (adminModel.PayMet == AdminModel.PaymentMethod.Cash) PayMet = "Наличные";
+        else if (adminModel.PayMet == AdminModel.PaymentMethod.Card) PayMet = "Карта";
+
+        bsonDocuments.Clear();
+
+        if (!adminModel.isChecked)
+        {
+            bsonDocuments.Clear();
+            mongo.GlobalFilter(bsonDocuments, ConvertDate(), adminModel.PhoneNumber, adminModel.OrderNumber, adminModel.Email, GetMeth, PayMet);
+        }
+        else
+        {
+            bsonDocuments.Clear();
+            string? date = null;
+            mongo.GlobalFilter(bsonDocuments, date, adminModel.PhoneNumber, adminModel.OrderNumber, adminModel.Email, GetMeth, PayMet);
+        }
+
+    }
+
+    public void ModalWorksAdmin()
+    {
+        orderNumAdm = mongo.ModalWorks(order, "orderNum", barCodesAdm);
+        dateOrderAdm = mongo.ModalWorks(order, "dateOrder", barCodesAdm).Substring(0, 10);
+        cityAdm = mongo.ModalWorks(order, "city", barCodesAdm);
+        dateDeviveryAdm = mongo.ModalWorks(order, "dateDevivery", barCodesAdm);
+        clientNameAdm = mongo.ModalWorks(order, "clientName", barCodesAdm);
+        clientPhoneAdm = mongo.ModalWorks(order, "clientPhone", barCodesAdm);
+        clientMailAdm = mongo.ModalWorks(order, "clientMail", barCodesAdm);
+        getMethodAdm = mongo.ModalWorks(order, "getMethod", barCodesAdm);
+        clientAdressAdm = mongo.ModalWorks(order, "clientAdress", barCodesAdm); 
+        paymentMethodAdm = mongo.ModalWorks(order, "paymentMethod", barCodesAdm); 
+        finalAmountAdm = Convert.ToInt32(mongo.ModalWorks(order, "finalAmount", barCodesAdm));
+        mongo.ModalWorks(order, "barcodes", barCodesAdm);
+    }
+
+    public void AddToList()
+    {
+        if (barcode != null)
+        {
+            barCodesAdm.Add(barcode);
+            barcode = null;
+        }
+        else barcode = null;
+    }
+
+    public void RemoveBarcode(string bar)
+    {
+        barCodesAdm.Remove(bar);
+    }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            AddToList();
+        }
+    }
+
+    public void CalculateFinalAmount()
+    {
+        user.BoxAmount = barCodesAdm.Count * user.BoxPrice;
+
+        if ((clientAdressAdm == null) | (getMethodAdm == "Привезет самостоятельно") | (clientAdressAdm == ""))
+        {
+            user.DeliveryPrice = 0;
+            clientAdressAdm = null;
+        }
+        else user.DeliveryPrice = 400;
+
+        if ((user.DeliveryPrice == null) | (user.DeliveryPrice == 0))
+        {
+            if (user.BoxAmount == 0)
+            {
+                finalAmountAdm = 0;
+            }
+            else finalAmountAdm = user.BoxAmount + user.DeliveryPrice;
+        }
+        else finalAmountAdm = user.BoxAmount + user.DeliveryPrice;
+
+        if(paymentMethodAdm == "Карта")
+        {
+            finalAmountAdm += (((user.BoxAmount + user.DeliveryPrice) * 2) / 100);
+        }
+    }
+
+    public void UpdateDocument()
+    {
+        mongo.UpdateDocument(order, cityAdm, clientNameAdm, clientPhoneAdm, clientMailAdm, getMethodAdm, 
+                                   clientAdressAdm, paymentMethodAdm, finalAmountAdm, barCodesAdm);
+    }
+
+
+    private async Task Logout()
+    {
+        var customAuthStateProvider = (CustomAuthStateProvider)authStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(null);
+        navManager.NavigateTo("/login", true);
+    }
+
+    DateTimeOffset? StartDate { get; set; } = DateTime.Today;
+    DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
+    
+}

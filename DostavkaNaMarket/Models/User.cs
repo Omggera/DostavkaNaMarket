@@ -39,6 +39,7 @@ namespace DostavkaNaMarket.Models
         [DataType(DataType.PhoneNumber)]
         public string? ClientPhone { get; set; }
 
+        [DataType(DataType.EmailAddress)]
         public string? ClientMail { get; set; }
 
         public enum OfficeOrDelivery
@@ -48,7 +49,7 @@ namespace DostavkaNaMarket.Models
         }
         public OfficeOrDelivery? OfDelSell { get; set; } = OfficeOrDelivery.Sam;
         public Dictionary<string, object>? InputAttributes { get; set; }
-        
+
         public string? ClientAdress { get; set; }
 
         public List<string> AllNumbersBarcode = new List<string>();
@@ -81,7 +82,9 @@ namespace DostavkaNaMarket.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id { get; set; }
 
-        public int? orderNum { get; set; }
+        public long? orderNum { get; set; }
+
+        public DateTimeOffset DateNewOrderUTC { get; set; } = DateTime.Now;
         
 
         // Не красивый, но рабочий метод определения даты отправки

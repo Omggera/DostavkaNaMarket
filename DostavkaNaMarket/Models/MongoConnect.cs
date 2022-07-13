@@ -58,12 +58,10 @@ namespace DostavkaNaMarket.Models
             await Users.InsertOneAsync(c);
         }
         // обновление документа 
-        /*
-        public async Task Update(User c)
-        {
-            await Users.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(c.Id)), c);
-        }
-        */
+        //public async Task Update(User c)
+        //{
+        //    await Users.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(c.Id)), c);
+        //}
         // удаление документа
         public async Task Remove(string id)
         {

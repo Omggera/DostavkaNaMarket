@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using DostavkaNaMarket.Data
 @using DostavkaNaMarket.Models
 @using MongoDB.Bson
 @using MongoDB.Driver
@@ -235,20 +234,19 @@
 </EditForm>
 
 @code{
-    public User user = new User();
-
-    string connectionString = "mongodb://localhost:27017";
+    User user = new User();
+    MongoDB mongo = new MongoDB();
 
     public void Create()
     {
         // Дата
         if(user.DateSell == User.Date.Среда)
         {
-            user.dateDB = user.dateWednesday.ToString("dddd dd MMMM yyyy");
+            user.dateDB = user.dateWednesday.ToString("ddd dd MMMM yy");
         }
         else if(user.DateSell == User.Date.Понедельник)
         {
-            user.dateDB = user.dateMonday.ToString("dddd dd MMMM yyyy");
+            user.dateDB = user.dateMonday.ToString("ddd dd MMMM yy");
         }
 
         // Метод получения
@@ -271,15 +269,14 @@
             user.paymentMethodDB = "Карта";
         }
 
-        
+        user.orderNum = mongo.AllDocCount() + 1;
 
-        MongoClient client = new MongoClient(connectionString);
-        IMongoDatabase database = client.GetDatabase("test");
-        var collection = database.GetCollection<BsonDocument>("users");
 
+        //Добавляем данные в БД
         BsonDocument doc = new BsonDocument 
         { 
             {"orderNum",$"{user.orderNum}"},
+            {"dateOrder",$"{user.DateNewOrderUTC}"},
             {"city",$"{user.CitySell}"},
             {"dateDevivery",$"{user.dateDB}"},
             {"clientName",$"{user.ClientName}"},
@@ -291,26 +288,8 @@
             {"finalAmount",$"{user.FinalAmount}"},
             {"barcodes", new BsonArray(user.AllNumbersBarcode)}
         };
-        collection.InsertOne(doc);
-        Console.WriteLine(doc.IndexOfName("orderNum"));
 
-        
-        var dictionary = doc.ToDictionary();
-        string? numb = dictionary["orderNum"].ToString();
-        int numbInt = Convert.ToInt32(numb);
-        if(numbInt > 0)
-        {
-            user.orderNum += 1;
-        }
-        Console.WriteLine(numb);
-
-
-        //for(int i = 0; i < numbInt; i++)
-        //{
-        //    user.orderNum += i;
-        //}
-
-        
+        mongo.AddDoc(doc).GetAwaiter();
     }
 
     void StepPreview()

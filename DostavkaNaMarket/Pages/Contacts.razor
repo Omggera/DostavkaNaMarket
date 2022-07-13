@@ -1,7 +1,9 @@
 ﻿@page "/contacts"
-@inject ILoggerFactory LoggerFactory
+@inject ILoggerFactory LoggerF
+@attribute [Authorize]
 
-<PageTitle>Counter</PageTitle>
+
+<PageTitle>Контакты</PageTitle>
 
 <h1>Counter</h1>
 
@@ -9,13 +11,16 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+
 @code {
     private int currentCount = 0;
+    MongoDB mon = new();
 
     private void IncrementCount()
     {
-        var logger = LoggerFactory.CreateLogger<Counter>();
-        logger.LogWarning($"Someone has clicked me! {currentCount}");
+        //var logger = LoggerFactory.CreateLogger<Counter>();
+        //logger.LogWarning($"Someone has clicked me! {currentCount}");
         currentCount++;
+        mon.AllDocCount();
     }
 }

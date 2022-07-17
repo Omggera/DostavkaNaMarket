@@ -337,22 +337,13 @@
                           </tbody>
                         </table>
                       <hr class="my-4">
-                      <a @onclick="Logout" href="javascript:void(0)">Выйти</a>
-
-
-                      <p>@adminModel.PhoneNumber</p>
-                        <p>@adminModel.Email</p>
-                        <p>@adminModel.OrderNumber</p>
-                        <p>@adminModel.PayMet</p>
-                        <p>@adminModel.GetMeth</p>
-                            @{
-                                DateTimeOffset date = StartDate ?? DateTime.Now;
-
-                            }
-                        <p>@date.ToString("dddd dd MMMM yyyy")</p>
-                        <p>@getMethodAdm</p>
-                        
-
+                      <div class="row align-items-end">
+                        <div class="col-5"></div>
+                        <div class="col-6"></div>
+                        <div class="col-1">
+                          <button type="button" class="btn btn-danger" @onclick="Logout" href="javascript:void(0)">Выйти</button>
+                        </div>
+                      </div>
                       <hr class="my-4">
                   </div>
                 </div>
@@ -374,7 +365,6 @@
     MongoDB mongo = new MongoDB();
     AdminModel adminModel = new AdminModel();
     User user = new User();
-    ExcelCreate excel = new ExcelCreate();
 
     DateTimeOffset? StartDate { get; set; } = DateTime.Today;
     DateTimeOffset? EndDate { get; set; } = DateTime.Today.AddDays(1).AddTicks(-1);
@@ -546,6 +536,7 @@
         {
             ExcelWorksheet ws = excelPackage.Workbook.Worksheets["Sheet"];
 
+            //Первый экземпляр
             //Номер и дата заказа
             ws.Cells["I4"].Value = $"Договор на оказание транспортных услуг №{orderNumAdm} от {dateOrderAdm} г.{cityAdm}";
 
@@ -563,7 +554,7 @@
             ws.Cells["F10"].Value = $"{clientNameAdm}";
 
             // Номер телефона
-            ws.Cells["Q9"].Value = $"{clientPhoneAdm}";
+            ws.Cells["Q9"].Value = $"{string.Format("{0:(###) ###-####}", long.Parse(clientPhoneAdm))}";
 
             // Дата отправки
             ws.Cells["K12"].Value = $"{dateDeviveryAdm}";
@@ -607,6 +598,67 @@
             //Общая сумма
             ws.Cells["O40"].Value = finalAmountAdm;
 
+            //Второй экземпляр
+            //Номер и дата заказа
+            ws.Cells["I63"].Value = $"Договор на оказание транспортных услуг №{orderNumAdm} от {dateOrderAdm} г.{cityAdm}";
+
+            //Адрес
+            if((clientAdressAdm == null) |(clientAdressAdm == ""))
+            {
+                ws.Cells["F67"].Value = $"{cityAdm}";
+            }
+            else
+            {
+                ws.Cells["F67"].Value = $"{clientAdressAdm}";
+            }
+
+            //Имя клиента
+            ws.Cells["F69"].Value = $"{clientNameAdm}";
+
+            // Номер телефона
+            ws.Cells["Q68"].Value = $"{string.Format("{0:(###) ###-####}", long.Parse(clientPhoneAdm))}";
+
+            // Дата отправки
+            ws.Cells["K71"].Value = $"{dateDeviveryAdm}";
+
+            //Склад
+            if((dateDeviveryAdm.Substring(0, 2)) == "пн")
+            {
+                ws.Cells["F76"].Value = $"Коледино";
+            }
+            else if((dateDeviveryAdm.Substring(0, 2)) == "ср")
+            {
+                ws.Cells["F76"].Value = $"Электросталь";
+            }
+
+            //ШК коробок, цена и количество
+            ws.Cells["C85"].LoadFromCollection(barCodesAdm);
+
+            var sourceRangePriceTwo = ws.Cells[$"O85:O{84+(barCodesAdm.Count)}"];
+            if(paymentMethodAdm == "Карта")
+            {
+                sourceRangePriceTwo.Value = 204;
+            }
+            else if(paymentMethodAdm == "Наличные")
+            {
+                sourceRangePriceTwo.Value = 200;
+            }
+
+            var sourceRangeCountTwo = ws.Cells[$"N85:N{84+(barCodesAdm.Count)}"];
+            sourceRangeCountTwo.Value = 1;
+
+            if(getMethodAdm == "Нужен вывоз")
+            {
+                ws.Cells[$"C{85+(barCodesAdm.Count)}"].Value = "Вывоз";
+                ws.Cells[$"O{85+(barCodesAdm.Count)}"].Value = 400;
+            }
+            
+
+            //Общее количество коробок
+            ws.Cells["N99"].Value = barCodesAdm.Count;
+
+            //Общая сумма
+            ws.Cells["O99"].Value = finalAmountAdm;
 
             byte[] fileContents = excelPackage.GetAsByteArray();
             await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "BlazorFile.xlsx", Convert.ToBase64String(fileContents));

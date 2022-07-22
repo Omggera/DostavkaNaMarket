@@ -147,7 +147,10 @@
                           <tbody> 
                             @foreach(var doc in bsonDocuments)
                             {   
-                                <tr class="myclass" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="args => OrderModal(doc, args)" id="@doc["orderNum"]">
+                                if(@doc["status"] == "Новый")
+                                {
+                                    <tr class="myclass" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+                                    @onclick="args => OrderModal(doc, args)" id="@doc["orderNum"]">
                                     <th scope="row" >@doc["orderNum"]</th>
                                     <td>@doc["city"]</td>
                                     <td>@doc["dateDevivery"]</td>
@@ -159,7 +162,43 @@
                                     <td>@doc["paymentMethod"]</td>
                                     <td>@doc["finalAmount"] руб</td>
                                     <td>@doc["barcodes"]</td>
-                                </tr>
+                                    </tr>
+                                }
+                                else if(@doc["status"] == "Выполнен")
+                                {
+                                    <tr class="table-success" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+                                    @onclick="args => OrderModal(doc, args)" id="@doc["orderNum"]">
+                                    <th scope="row" >@doc["orderNum"]</th>
+                                    <td>@doc["city"]</td>
+                                    <td>@doc["dateDevivery"]</td>
+                                    <td>@doc["clientName"]</td>
+                                    <td>@doc["clientPhone"]</td>
+                                    <td>@doc["clientMail"]</td>
+                                    <td>@doc["getMethod"]</td>
+                                    <td>@doc["clientAdress"]</td>
+                                    <td>@doc["paymentMethod"]</td>
+                                    <td>@doc["finalAmount"] руб</td>
+                                    <td>@doc["barcodes"]</td>
+                                    </tr>
+                                }
+                                else if(@doc["status"] == "Отменен")
+                                {
+                                    <tr class="table-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+                                    @onclick="args => OrderModal(doc, args)" id="@doc["orderNum"]">
+                                    <th scope="row" >@doc["orderNum"]</th>
+                                    <td>@doc["city"]</td>
+                                    <td>@doc["dateDevivery"]</td>
+                                    <td>@doc["clientName"]</td>
+                                    <td>@doc["clientPhone"]</td>
+                                    <td>@doc["clientMail"]</td>
+                                    <td>@doc["getMethod"]</td>
+                                    <td>@doc["clientAdress"]</td>
+                                    <td>@doc["paymentMethod"]</td>
+                                    <td>@doc["finalAmount"] руб</td>
+                                    <td>@doc["barcodes"]</td>
+                                    </tr>
+                                }
+                                
                             }
                             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -178,6 +217,26 @@
                                           </div>
 
                                           <div class="col-3 col-sm-3">
+                                            <label for="status" class="col-form-label">Статус</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                              @{ClassSelect();}
+                                              <InputSelect class="@classColor" @bind-Value="statusAdm" disabled="@disabledInput">
+                                                <option value="Новый">Новый</option>
+                                                <option value="Выполнен">Выполнен</option>
+                                                <option value="Отменен">Отменен</option>
+                                              </InputSelect>
+                                          </div>
+                                          
+                                          <div class="col-3 col-sm-3">
+                                            <label for="clientNameAdm" class="col-form-label">Имя</label>
+                                          </div>
+                                          <div class="col-6 col-sm-3">
+                                            <input class="form-control" id="clientNameAdm"  @bind="clientNameAdm" @bind:event="oninput" 
+                                                            disabled="@disabledInput"/>
+                                          </div>
+
+                                          <div class="col-3 col-sm-3">
                                             <label for="cityAdm" class="col-form-label">Город</label>
                                           </div>
                                           <div class="col-6 col-sm-3">
@@ -188,12 +247,12 @@
                                                 <option value="Ковров">Ковров</option>
                                               </InputSelect>
                                           </div>
-
+                                          
                                           <div class="col-3 col-sm-3">
-                                            <label for="clientNameAdm" class="col-form-label">Имя</label>
+                                            <label for="clientPhoneAdm" class="col-form-label">Телефон</label>
                                           </div>
                                           <div class="col-6 col-sm-3">
-                                            <input class="form-control" id="clientNameAdm"  @bind="clientNameAdm" @bind:event="oninput" 
+                                            <input class="form-control" id="clientPhoneAdm"  @bind="clientPhoneAdm" @bind:event="oninput" 
                                                             disabled="@disabledInput"/>
                                           </div>
 
@@ -203,13 +262,12 @@
                                           <div class="col-6 col-sm-3">
                                             <input class="form-control" id="dateOrderAdm"  @bind="dateOrderAdm" @bind:event="oninput" disabled/>
                                           </div>
-
-                                           <div class="col-3 col-sm-3">
-                                            <label for="clientPhoneAdm" class="col-form-label">Телефон</label>
+                                          
+                                          <div class="col-3 col-sm-3">
+                                            <label for="dateDeviveryAdm" class="col-form-label">Дата отправки</label>
                                           </div>
                                           <div class="col-6 col-sm-3">
-                                            <input class="form-control" id="clientPhoneAdm"  @bind="clientPhoneAdm" @bind:event="oninput" 
-                                                            disabled="@disabledInput"/>
+                                            <input class="form-control" id="dateDeviveryAdm"  @bind="dateDeviveryAdm" @bind:event="oninput" disabled/>
                                           </div>
 
                                           <div class="col-3 col-sm-3">
@@ -219,16 +277,6 @@
                                             <input class="form-control" id="clientMailAdm"  @bind="clientMailAdm" @bind:event="oninput" 
                                                             disabled="@disabledInput"/>
                                           </div>
-
-                                          <div class="col-3 col-sm-3">
-                                            <label for="dateDeviveryAdm" class="col-form-label">Дата отправки</label>
-                                          </div>
-                                          <div class="col-6 col-sm-3">
-                                            <input class="form-control" id="dateDeviveryAdm"  @bind="dateDeviveryAdm" @bind:event="oninput" disabled/>
-                                          </div>
-
-                                          <div class="col-6 col-sm-3"></div>
-                                          <div class="col-6 col-sm-3"></div>
 
                                           <div class="col-3 col-sm-3">
                                             <label for="getMethodAdm" class="col-form-label">Способ получения</label>
@@ -378,6 +426,7 @@
 
     string? orderNumAdm { get; set; }
     string? dateOrderAdm { get; set; }
+    string? statusAdm { get; set; }
     string? cityAdm { get; set; }
     string? dateDeviveryAdm { get; set; }
     string? clientNameAdm { get; set; }
@@ -388,10 +437,28 @@
     string? paymentMethodAdm { get; set; }
     int? finalAmountAdm { get; set; }
 
+    string? classColor { get; set; } = "form-select";
+
     List<string> barCodesAdm = new List<string>();
     string? barcode { get; set; }
 
     bool disabledInput { get; set; } = true;
+
+    public void ClassSelect()
+    {
+        if(statusAdm == "Новый")
+        {
+            classColor = "form-select";
+        }
+        else if(statusAdm == "Выполнен")
+        {
+            classColor = "form-select btn-outline-success";
+        }
+        else if(statusAdm == "Отменен")
+        {
+            classColor = "form-select btn-outline-secondary";
+        }
+    }
 
     public void ActionDisabled()
     {
@@ -452,6 +519,7 @@
     {
         orderNumAdm = mongo.ModalWorks(order, "orderNum", barCodesAdm);
         dateOrderAdm = mongo.ModalWorks(order, "dateOrder", barCodesAdm).Substring(0, 10);
+        statusAdm = mongo.ModalWorks(order, "status", barCodesAdm);
         cityAdm = mongo.ModalWorks(order, "city", barCodesAdm);
         dateDeviveryAdm = mongo.ModalWorks(order, "dateDevivery", barCodesAdm);
         clientNameAdm = mongo.ModalWorks(order, "clientName", barCodesAdm);
@@ -516,8 +584,10 @@
 
     public void UpdateDocument()
     {
-        mongo.UpdateDocument(order, cityAdm, clientNameAdm, clientPhoneAdm, clientMailAdm, getMethodAdm, 
+        mongo.UpdateDocument(order, statusAdm, cityAdm, clientNameAdm, clientPhoneAdm, clientMailAdm, getMethodAdm, 
                                    clientAdressAdm, paymentMethodAdm, finalAmountAdm, barCodesAdm);
+        RestartSearch();
+        disabledInput = true;
     }
 
 
@@ -590,7 +660,7 @@
                 ws.Cells[$"C{26+(barCodesAdm.Count)}"].Value = "Вывоз";
                 ws.Cells[$"O{26+(barCodesAdm.Count)}"].Value = 400;
             }
-            
+
 
             //Общее количество коробок
             ws.Cells["N40"].Value = barCodesAdm.Count;
@@ -652,7 +722,6 @@
                 ws.Cells[$"C{85+(barCodesAdm.Count)}"].Value = "Вывоз";
                 ws.Cells[$"O{85+(barCodesAdm.Count)}"].Value = 400;
             }
-            
 
             //Общее количество коробок
             ws.Cells["N99"].Value = barCodesAdm.Count;
@@ -661,11 +730,10 @@
             ws.Cells["O99"].Value = finalAmountAdm;
 
             byte[] fileContents = excelPackage.GetAsByteArray();
-            await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", "BlazorFile.xlsx", Convert.ToBase64String(fileContents));
-
+            await JSRuntime.InvokeVoidAsync(
+                "BlazorDownloadFile", 
+                $"({dateDeviveryAdm.Substring(3, 2)}){dateOrderAdm} {orderNumAdm}{cityAdm.Substring(0, 1).ToLower()}.xlsx", 
+                Convert.ToBase64String(fileContents));
         }
-        
     }
-    
-    
 }

@@ -89,7 +89,7 @@
                 <label for="phoneNumber" class="form-label">Номер телефона</label>
                 <div class="input-group has-validation">
                     <span class="input-group-text">+7</span>
-                    <InputText class="form-control" placeholder="9011418686" @bind-Value="user.ClientPhone"/>
+                    <InputText class="form-control" name="phone" placeholder="9011418686" @bind-Value="user.ClientPhone"/>
                     <ValidationMessage For="(() => user.ClientPhone)" />
                 </div>
             </div>
@@ -276,6 +276,7 @@
         BsonDocument doc = new BsonDocument 
         { 
             {"orderNum",$"{user.orderNum}"},
+            {"status","Новый"},
             {"dateOrder",$"{user.DateNewOrderUTC}"},
             {"city",$"{user.CitySell}"},
             {"dateDevivery",$"{user.dateDB}"},

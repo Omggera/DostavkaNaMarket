@@ -123,13 +123,14 @@ namespace DostavkaNaMarket.Models
             return dataValue;
         }
 
-        public void UpdateDocument(string? order, string? city, string? name, string? phone, string? mail, string? getMethod, 
+        public void UpdateDocument(string? order, string? status, string? city, string? name, string? phone, string? mail, string? getMethod, 
                                    string? adress, string? payMethod, int? amount, List<string> barcodes)
         {
             Collection.UpdateOneAsync(
                 new BsonDocument("orderNum", $"{order}"),
                 new BsonDocument("$set", new BsonDocument 
                 {
+                    {"status",$"{status}"},
                     {"city",$"{city}"},
                     {"clientName",$"{name}"},
                     {"clientPhone",$"{phone}"},

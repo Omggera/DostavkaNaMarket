@@ -17,89 +17,29 @@
         <h3>Ваша заявка оформлена!</h3>
     </div>
     <div class="my-3">
-        @if(mongo.DataForPreview("getMethod") == "Привезет самостоятельно")
-        {
-            if(Regex.IsMatch(mongo.DataForPreview("dateDevivery"), "\\bпонедельник\\b"))
-            {
-                <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-6">
-                      <p class="fs-5">
-                        Для того чтобы мы отправили вашу поставку в Понедельник, вам нужно привезти её нам со вторника по четверг включительно
-                        с 10 до 19, либо в день отправки с 10 до 11 по адресу г. Владимир, ул. Ново-Ямская, д. 75
-                      </p>
-                    </div>
-                    <div class="col">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-6">
-                      <p class="fs-5">
-                        Подробнее о режиме работы вы можете узнать в разделе <a href="/contacts">Контакты</a> или позвонив по телефону +7(901)141-8686
-                      </p>
-                    </div>
-                    <div class="col">
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-6">
-                      <p class="fs-5">
-                        Для того чтобы мы отправили вашу поставку в Среду, вам нужно привезти её нам с понедельника по вторник включительно
-                        с 10 до 19, либо в день отправки с 10 до 11 по адресу г. Владимир, ул. Ново-Ямская, д. 75
-                      </p>
-                    </div>
-                    <div class="col">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-6">
-                      <p class="fs-5">
-                        Подробнее о режиме работы вы можете узнать в разделе <a href="/contacts">Контакты</a> или позвонив по телефону +7(901)141-8686
-                      </p>
-                    </div>
-                    <div class="col">
-                    </div>
-                </div>
-            }
-            
-        }
-        else
-        {
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-6">
+                <p class="fs-5">
+                В ближайшее время с вами свяжется наш менеджер для уточнения деталей.
+                </p>
+            </div>
+            <div class="col">
+            </div>
+            </div>
             <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-6">
-                      <p class="fs-5">
-                        В ближайшее время с вами свяжется наш менеджер для уточнения деталей вывоза. Обратитите внимание - 
-                        погрузочные работы осуществляются силами заказчика и в стоимость вывоза не входят.
-                      </p>
-                    </div>
-                    <div class="col">
-                    </div>
+                <div class="col">
                 </div>
-                <div class="row">
-                    <div class="col">
-                    </div>
-                    <div class="col-6">
-                      <p class="fs-5">
-                        Подробнее о режиме работы вы можете узнать в разделе <a href="/contacts">Контакты</a> или позвонив по телефону +7(901)141-8686
-                      </p>
-                    </div>
-                    <div class="col">
-                    </div>
+                <div class="col-6">
+                    <p class="fs-5">
+                    Подробнее о режиме работы вы можете узнать в разделе <a href="/contacts">Контакты</a> или позвонив по телефону +7(901)141-8686
+                    </p>
                 </div>
-        }
-    </div>
+                <div class="col">
+                </div>
+            </div>
+</div>
     </div>
     
 </div>

@@ -4,7 +4,7 @@
 @using MongoDB.Driver
 
 @inject NavigationManager NavigationManager
-
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Добавить поставку</PageTitle>
 
@@ -89,7 +89,7 @@
                 <label for="phoneNumber" class="form-label">Номер телефона</label>
                 <div class="input-group has-validation">
                     <span class="input-group-text">+7</span>
-                    <InputText class="form-control" name="phone" placeholder="9011418686" @bind-Value="user.ClientPhone"/>
+                    <InputText type="number" class="form-control" name="phone" placeholder="9011418686" @bind-Value="user.ClientPhone"/>
                     <ValidationMessage For="(() => user.ClientPhone)" />
                 </div>
             </div>
@@ -218,7 +218,7 @@
             </div>
 
             <div class="col-12">
-              <button class="w-100 btn btn-secondary btn-lg" type="button" value="" @attributes="user.InputAttributesSubmit" @onclick="StepPreview">Создать заявку</button>
+              <button class="w-100 btn btn-secondary btn-lg" type="button" @attributes="user.InputAttributesSubmit">Создать заявку</button>
           </div>
           </div>
       </div>
@@ -291,6 +291,7 @@
         };
 
         mongo.AddDoc(doc).GetAwaiter();
+        StepPreview();
     }
 
     void StepPreview()
@@ -299,7 +300,6 @@
         {
             NavigationManager.NavigateTo("preview");
         }
-        
+
     }
-    
 }
